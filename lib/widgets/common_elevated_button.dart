@@ -16,7 +16,8 @@ class CommonElevatedButton extends StatelessWidget {
       this.borderRadius,
       this.backgroundColor,
       this.height,
-      this.width, this.isLoading=false});
+      this.width,
+      this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +25,22 @@ class CommonElevatedButton extends StatelessWidget {
         height: height ?? kToolbarHeight - 25,
         width: width ?? 200,
         child: ElevatedButton(
-            onPressed: onPressed,
+            onPressed: isLoading ? null : onPressed,
             style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(borderRadius ?? 6)),
                 backgroundColor: backgroundColor ?? const Color(0xff1E1E1E),
                 side: const BorderSide(color: Colors.transparent)),
             child: Center(
-                child: isLoading?const CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                  valueColor:  AlwaysStoppedAnimation<Color>(Colors.black)
-                ):Text(text ?? 'Submit',
-                    style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Anek')))));
+                child: isLoading
+                    ? const CircularProgressIndicator(
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black))
+                    : Text(text ?? 'Submit',
+                        style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Anek')))));
   }
 }

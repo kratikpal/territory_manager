@@ -1,5 +1,7 @@
 import 'package:cheminova/constants/constant.dart';
+import 'package:cheminova/screens/home_screen.dart';
 import 'package:cheminova/screens/login_screen.dart';
+import 'package:cheminova/services/secure__storage_service.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,12 +12,23 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  void _checkLogin() {
+    SecureStorageService().read(key: 'user').then((value) {
+      if (value != null) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const HomePage()));
+      } else {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      _checkLogin();
     });
   }
 

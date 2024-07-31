@@ -1,7 +1,9 @@
+import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/change_password_screen.dart';
 import 'package:cheminova/screens/home_screen.dart';
 import 'package:cheminova/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CommonDrawer extends StatelessWidget {
   const CommonDrawer({super.key});
@@ -12,48 +14,58 @@ class CommonDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          Container(
+          SizedBox(
             height: 150,
-            child: const DrawerHeader(
-              decoration: BoxDecoration(
+            child: DrawerHeader(
+              decoration: const BoxDecoration(
                 color: Colors.black87,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    'Username',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),Text(
-                    'Employee ID',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
+              child: Consumer<UserProvider>(
+                builder: (context, userProvider, child) {
+                  if (userProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (userProvider.user != null) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          userProvider.user!.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          userProvider.user!.uniqueId,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Text(
+                      'No User Data',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    );
+                  }
+                },
               ),
             ),
           ),
-          // const UserAccountsDrawerHeader(
-          //   accountName: Text("Name"),
-          //   accountEmail: Text("Employee ID"),
-          //   // currentAccountPicture: CircleAvatar(
-          //   //   backgroundImage: AssetImage(
-          //   //       'assets/profile.png'), // Replace with actual user image
-          //   // ),
-          //   decoration: BoxDecoration(
-          //     color: Colors.black87,
-          //   ),
-          // ),
           ListTile(
             leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage(),));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
             },
           ),
           ListTile(
@@ -67,15 +79,25 @@ class CommonDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Change Password'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordPage(),));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ChangePasswordPage()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()));
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Provider.of<UserProvider>(context, listen: false)
+                    .clearUserProfile();
+              });
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
             },
           ),
         ],

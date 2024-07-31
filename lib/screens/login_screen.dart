@@ -1,5 +1,6 @@
 import 'package:cheminova/provider/login_provider.dart';
 import 'package:cheminova/screens/forgot_password_screen.dart';
+import 'package:cheminova/screens/home_screen.dart';
 import 'package:cheminova/screens/verify_phone_screen.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
@@ -44,7 +45,10 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50),
                 Align(
                   alignment: Alignment.center,
-                  child: Container(decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(12)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.all(8),
                     child: Image.asset('assets/cheminova_logo.png',
                         height: kToolbarHeight - 25),
@@ -54,7 +58,8 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   padding:
                       const EdgeInsets.all(20.0).copyWith(top: 15, bottom: 30),
-                  margin: const EdgeInsets.symmetric(horizontal: 30.0).copyWith(bottom: 50),
+                  margin: const EdgeInsets.symmetric(horizontal: 30.0)
+                      .copyWith(bottom: 50),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.white),
                       color: const Color(0xffB4D1E5).withOpacity(0.9),
@@ -81,20 +86,21 @@ class _LoginPageState extends State<LoginPage> {
                                 fontFamily: 'Roboto')),
                         const SizedBox(height: 20),
                         Consumer<LoginProvider>(
-                            builder: (context, value, child) =>
-                                CommonTextFormField(
-                                    controller: value.emailController,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your email id';
-                                      }
-                                      if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                                          .hasMatch(value)) {
-                                        return 'Please enter a valid email id';
-                                      }
-                                      return null;
-                                    },
-                                    title: 'Username')),
+                          builder: (context, value, child) =>
+                              CommonTextFormField(
+                                  controller: value.emailController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your email id';
+                                    }
+                                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                                        .hasMatch(value)) {
+                                      return 'Please enter a valid email id';
+                                    }
+                                    return null;
+                                  },
+                                  title: 'Username'),
+                        ),
                         const SizedBox(height: 20),
                         Consumer<LoginProvider>(
                             builder: (context, value, child) =>
@@ -108,7 +114,6 @@ class _LoginPageState extends State<LoginPage> {
                                     },
                                     title: 'Password')),
                         const SizedBox(height: 15),
-
                         Align(
                           alignment: Alignment.center,
                           child: TextButton(
@@ -140,7 +145,20 @@ class _LoginPageState extends State<LoginPage> {
                                 text: 'SIGN IN',
                                 isLoading: value.isLoading,
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder:(context) => const VerifyPhoneScreen()));
+                                  loginProvider.login().then((result) {
+                                    var (status, message) = result;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(message)));
+                                    if (status) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomePage(),
+                                        ),
+                                      );
+                                    }
+                                  });
                                 },
                                 // onPressed: value.isLoading
                                 //     ? null

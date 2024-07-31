@@ -23,8 +23,10 @@ class LoginProvider extends ChangeNotifier {
   Future<(bool, String)> login() async {
     setLoading(true);
     try {
-      Response response = await _apiClient.post(ApiUrls.loginUrl,
-          data: {'email': emailController.text.trim(), 'password': passwordController.text.trim()});
+      Response response = await _apiClient.post(ApiUrls.loginUrl, data: {
+        'email': emailController.text.trim(),
+        'password': passwordController.text.trim()
+      });
       setLoading(false);
       if (response.statusCode == 200) {
         await _storageService.write(
@@ -33,9 +35,22 @@ class LoginProvider extends ChangeNotifier {
       } else {
         return (false, response.data['message'].toString());
       }
+    } on DioException catch (e) {
+      setLoading(false);
+
+      if (e.response?.data is Map<String, dynamic>) {
+        return (
+          false,
+          e.response?.data['message'].toString() ?? 'something went wrong'
+        );
+      } else if (e.response?.data is String) {
+        return (false, e.response?.data.toString() ?? 'something went wrong');
+      } else {
+        return (false, 'something went wrong');
+      }
     } catch (e) {
       setLoading(false);
-      return (false, 'Something want wrong');
+      return (false, 'something went wrong');
     }
   }
 }

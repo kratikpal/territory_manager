@@ -1,3 +1,4 @@
+import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/calendar_screen.dart';
 import 'package:cheminova/screens/collect_kyc_screen.dart';
 import 'package:cheminova/screens/mark_attendence_screen.dart';
@@ -12,38 +13,64 @@ import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/screens/daily_tasks_screen.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).fetchUserProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return CommonBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: const CommonAppBar(
+        appBar: AppBar(
           title: Row(
             children: [
               // CircleAvatar(
               //   backgroundImage: AssetImage(
               //       'assets/profile.png'), // Replace with actual user image
               // ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Welcome',
-                      style: TextStyle(
+              const SizedBox(width: 10),
+              Consumer<UserProvider>(
+                builder: (context, userProvider, child) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Welcome',
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        userProvider.user?.name ?? 'User Name',
+                        style: const TextStyle(
                           color: Colors.black87,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400)),
-                  Text('User Name',
-                      style: TextStyle(
-                          color: Colors.black87, fontSize: 20)),
-                ],
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
-          ), backgroundColor: Colors.transparent, elevation: 0,
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
         drawer: const CommonDrawer(),
         body: SafeArea(
@@ -62,7 +89,8 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const MarkAttendanceScreen(),
+                                builder: (context) =>
+                                    const MarkAttendanceScreen(),
                               ));
                         },
                       ),
@@ -79,17 +107,23 @@ class HomePage extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
+                      _buildCustomCard('Assign Tasks', '', onTap: () {}),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       Row(
                         children: [
                           Expanded(
-                            child: _buildCustomCard('Display\nSales data',
-                                'Quickly display Sales', onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const DisplaySalesScreen(),
-                                      ));
-                                }),
+                            child: _buildCustomCard(
+                                'Display\nSales data', 'Quickly display Sales',
+                                onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const DisplaySalesScreen(),
+                                  ));
+                            }),
                           ),
                           const SizedBox(
                             width: 12,
@@ -97,12 +131,13 @@ class HomePage extends StatelessWidget {
                           Expanded(
                             child: _buildCustomCard('Update Inventory Data',
                                 'Quickly Inventory Data', onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const UpdateInventoryScreen(),
-                                      ));
-                                }),
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UpdateInventoryScreen(),
+                                  ));
+                            }),
                           ),
                         ],
                       ),
@@ -112,7 +147,8 @@ class HomePage extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildCustomCard('Summary', '\n\n', onTap: () {
+                            child:
+                                _buildCustomCard('Summary', '\n\n', onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -125,11 +161,13 @@ class HomePage extends StatelessWidget {
                           ),
                           Expanded(
                             child: _buildCustomCard(
-                                'Product\nSales Data Visibility', '', onTap: () {
+                                'Product\nSales Data Visibility', '',
+                                onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const ProductSalesData(),
+                                    builder: (context) =>
+                                        const ProductSalesData(),
                                   ));
                             }),
                           ),
@@ -143,12 +181,13 @@ class HomePage extends StatelessWidget {
                           Expanded(
                             child: _buildCustomCard('Collect \nKYC Data',
                                 'Scan and upload KYC Documents', onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const CollectKycScreen(),
-                                      ));
-                                }),
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CollectKycScreen(),
+                                  ));
+                            }),
                           ),
                         ],
                       ),
@@ -156,23 +195,33 @@ class HomePage extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildCustomCard('Notifications',
-                                'Tasks & Alerts\n\n', onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const NotificationScreen(),
-                                      ));
-                                }),
+                            child: _buildCustomCard(
+                                'Notifications', 'Tasks & Alerts\n\n',
+                                onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NotificationScreen(),
+                                  ));
+                            }),
                           ),
                           const SizedBox(
                             width: 15,
                           ),
                           Expanded(
-                            child: _buildCustomCard('Calendar',
-                                ' Upcoming Appointments & Deadlines',onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CalendarScreen(),));
-                                },),
+                            child: _buildCustomCard(
+                              'Calendar',
+                              ' Upcoming Appointments & Deadlines',
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CalendarScreen(),
+                                    ));
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -180,14 +229,16 @@ class HomePage extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildCustomCard('Products Manual',
-                                'details of products', onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const ProductsManualScreen(),
-                                      ));
-                                }),
+                            child: _buildCustomCard(
+                                'Products Manual', 'details of products',
+                                onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ProductsManualScreen(),
+                                  ));
+                            }),
                           ),
                         ],
                       ),
@@ -202,7 +253,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomCard(String title, String subtitle, {void Function()? onTap}) {
+  Widget _buildCustomCard(String title, String subtitle,
+      {void Function()? onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -222,9 +274,9 @@ class HomePage extends StatelessWidget {
         ),
         subtitle: subtitle.isNotEmpty
             ? Text(
-          subtitle,
-          style: const TextStyle(color: Colors.white70, fontSize: 13),
-        )
+                subtitle,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+              )
             : null,
         onTap: onTap,
       ),

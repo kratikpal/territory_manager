@@ -13,17 +13,19 @@ class CommonTextFormField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
 
-const CommonTextFormField(
-      {super.key,
-      required this.title,
-      this.controller,
-      this.validator,
-      this.fillColor,
-      this.readOnly,
-      this.maxLines,
-      this.height,
-      this.keyboardType,
-      this.inputFormatters, this.maxLength});
+  const CommonTextFormField({
+    super.key,
+    required this.title,
+    this.controller,
+    this.validator,
+    this.fillColor,
+    this.readOnly,
+    this.maxLines,
+    this.height,
+    this.keyboardType,
+    this.inputFormatters,
+    this.maxLength,
+  });
 
   @override
   Widget build(BuildContext context) {

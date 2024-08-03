@@ -1,4 +1,5 @@
 import 'package:cheminova/provider/user_provider.dart';
+import 'package:cheminova/screens/assign_task_screen.dart';
 import 'package:cheminova/screens/calendar_screen.dart';
 import 'package:cheminova/screens/collect_kyc_screen.dart';
 import 'package:cheminova/screens/mark_attendence_screen.dart';
@@ -8,7 +9,6 @@ import 'package:cheminova/screens/summary_screen.dart';
 import 'package:cheminova/screens/product_sales_data.dart';
 import 'package:cheminova/screens/update_inventory_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
-import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               //   backgroundImage: AssetImage(
               //       'assets/profile.png'), // Replace with actual user image
               // ),
-              const SizedBox(width: 10),
+              // const SizedBox(width: 10),
               Consumer<UserProvider>(
                 builder: (context, userProvider, child) {
                   return Column(
@@ -107,7 +107,13 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 5,
                       ),
-                      _buildCustomCard('Assign Tasks', '', onTap: () {}),
+                      _buildCustomCard('Assign Tasks', '', onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AssignTaskScreen(),
+                            ));
+                      }),
                       const SizedBox(
                         height: 5,
                       ),

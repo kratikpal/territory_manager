@@ -1,12 +1,9 @@
 import 'package:cheminova/services/api_client.dart';
 import 'package:cheminova/services/api_urls.dart';
-import 'package:cheminova/services/secure__storage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class AttendanceProvider extends ChangeNotifier {
-  final _storageService = SecureStorageService();
-
   final _apiClient = ApiClient();
   bool _isLoading = false;
 
@@ -33,6 +30,15 @@ class AttendanceProvider extends ChangeNotifier {
         return (true, response.data['message'].toString());
       } else {
         return (false, response.data['message'].toString());
+      }
+    } on DioException catch (e) {
+      setLoading(false);
+      if (e.response != null && e.response?.data != null) {
+        // Extracting the error message from the Dio response
+        return (false, e.response!.data['message'].toString());
+      } else {
+        // When no response or response data is available
+        return (false, 'Something went wrong');
       }
     } catch (e) {
       setLoading(false);

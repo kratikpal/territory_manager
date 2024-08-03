@@ -1,7 +1,6 @@
 import 'package:cheminova/provider/login_provider.dart';
 import 'package:cheminova/screens/forgot_password_screen.dart';
 import 'package:cheminova/screens/home_screen.dart';
-import 'package:cheminova/screens/verify_phone_screen.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
 import 'package:cheminova/widgets/common_text_form_field.dart';

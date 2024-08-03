@@ -11,6 +11,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 class MarkAttendanceScreen extends StatefulWidget {
   const MarkAttendanceScreen({super.key});
 
@@ -21,7 +22,7 @@ class MarkAttendanceScreen extends StatefulWidget {
 class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
   late AttendanceProvider attendanceProvider;
   final dateController = TextEditingController(
-      text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
+      text: DateFormat('yyyy/MM/dd').format(DateTime.now()));
 
   final timeController =
       TextEditingController(text: DateFormat('hh:mm a').format(DateTime.now()));
@@ -32,7 +33,7 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
   @override
   void initState() {
     super.initState();
-    attendanceProvider=AttendanceProvider();
+    attendanceProvider = AttendanceProvider();
     _getCurrentLocation();
   }
 
@@ -65,7 +66,7 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
 
     Placemark place = placeMarks[0];
     setState(() {
-      locationController.text = place.locality??'';
+      locationController.text = place.locality ?? '';
     });
   }
 
@@ -74,7 +75,8 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     return ChangeNotifierProvider<AttendanceProvider>(
       create: (_) => attendanceProvider,
       builder: (context, child) => CommonBackground(
-        child: Scaffold(backgroundColor: Colors.transparent,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: CommonAppBar(
             actions: [
               IconButton(
@@ -90,7 +92,9 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                     fontSize: 28,
                     color: Colors.black,
                     fontWeight: FontWeight.w400,
-                    fontFamily: 'Anek')), backgroundColor: Colors.transparent, elevation: 0,
+                    fontFamily: 'Anek')),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
           drawer: const CommonDrawer(),
           body: Stack(
@@ -105,8 +109,8 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                     children: <Widget>[
                       const SizedBox(height: 16),
                       Container(
-                        padding:
-                            const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
+                        padding: const EdgeInsets.all(20.0)
+                            .copyWith(top: 30, bottom: 30),
                         margin: const EdgeInsets.symmetric(horizontal: 20.0),
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.white),
@@ -149,7 +153,8 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                                             AttendanceProvider value,
                                             Widget? child) =>
                                         CommonElevatedButton(
-                                            backgroundColor: const Color(0xff004791),
+                                            backgroundColor:
+                                                const Color(0xff004791),
                                             borderRadius: 30,
                                             width: double.infinity,
                                             height: kToolbarHeight - 10,
@@ -157,16 +162,22 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                                             onPressed: () {
                                               value
                                                   .markAttendance(
-                                                      dateController.text.trim(),
-                                                      timeController.text.trim(),
-                                                      locationController.text.trim(),
-                                                      notesController.text.trim())
+                                                      dateController.text
+                                                          .trim(),
+                                                      timeController.text
+                                                          .trim(),
+                                                      locationController.text
+                                                          .trim(),
+                                                      notesController.text
+                                                          .trim())
                                                   .then(
                                                 (result) {
-                                                  var (status, message) = result;
+                                                  var (status, message) =
+                                                      result;
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
-                                                          content: Text(message)));
+                                                          content:
+                                                              Text(message)));
                                                   if (status) {
                                                     Navigator.pushReplacement(
                                                         context,
@@ -210,17 +221,18 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: Consumer<AttendanceProvider>(builder: (context, value, child) {
-                  if(value.isLoading){
-                    return
-                        Container(
+                child: Consumer<AttendanceProvider>(
+                  builder: (context, value, child) {
+                    if (value.isLoading) {
+                      return Container(
                           color: Colors.black12,
-                            child: const Center(child: CircularProgressIndicator()));
-                  }
-                  else{
-                    return const SizedBox();
-                  }
-                }, ),
+                          child:
+                              const Center(child: CircularProgressIndicator()));
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
               )
             ],
           ),

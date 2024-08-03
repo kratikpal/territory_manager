@@ -8,25 +8,42 @@ class ApiClient {
   final SecureStorageService _storageService = SecureStorageService();
 
   ApiClient({String? baseUrl})
-      : _dio = Dio(BaseOptions(
+      : _dio = Dio(
+          BaseOptions(
             baseUrl: baseUrl ?? ApiUrls.baseUrl,
             connectTimeout: const Duration(seconds: 120),
-            receiveTimeout: const Duration(seconds: 120))) {
+            receiveTimeout: const Duration(seconds: 120),
+          ),
+        ) {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          String? token = await _storageService.read(key: 'access_token');
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          return handler.next(response);
+        },
+        onError: (DioException e, handler) {
+          return handler.next(e);
+        },
+      ),
+    );
+
     _dio.interceptors
         .add(LogInterceptor(responseBody: true, requestBody: true));
-    _dio.interceptors.add(PrettyDioLogger());
-    _dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (options, handler) async {
-      String? token = await _storageService.read(key: 'access_token');
-      if (token != null) {
-        options.headers['Authorization'] = 'Bearer $token';
-      }
-      return handler.next(options);
-    }, onResponse: (response, handler) {
-      return handler.next(response);
-    }, onError: (DioException e, handler) {
-      return handler.next(e);
-    }));
+    _dio.interceptors.add(PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+      error: true,
+      compact: true,
+      maxWidth: 90,
+    ));
   }
 
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) {

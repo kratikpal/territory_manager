@@ -43,6 +43,7 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> clearUserProfile() async {
     _user = null;
+    await SecureStorageService().delete(key: 'user');
     notifyListeners();
   }
 }

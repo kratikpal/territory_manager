@@ -1,5 +1,8 @@
+import 'package:cheminova/models/get_pd_response.dart';
 import 'package:cheminova/provider/collect_kyc_provider.dart';
+import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/common_elevated_button.dart';
@@ -72,16 +75,25 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 },
                                 controller: value.addressController),
                             const SizedBox(height: 15),
-                            CommonTextFormField(
-                                title: 'Town/City',
-                                fillColor: Colors.white,
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'Town/City cannot be empty';
-                                  }
-                                  return null;
-                                },
-                                controller: value.townCityController),
+                            CSCPicker(
+                              defaultCountry: CscCountry.India,
+                              disableCountry: true,
+                              onCountryChanged: (val) {
+                                setState(() {
+                                  value.country.text = val;
+                                });
+                              },
+                              onStateChanged: (val) {
+                                setState(() {
+                                  value.state.text = val ?? '';
+                                });
+                              },
+                              onCityChanged: (val) {
+                                setState(() {
+                                  value.city.text = val ?? '';
+                                });
+                              },
+                            ),
                             const SizedBox(height: 15),
                             CommonTextFormField(
                                 title: 'District',
@@ -95,20 +107,12 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.districtController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
-                                title: 'State',
-                                fillColor: Colors.white,
-                                validator: (String? value) {
-                                  if (value!.isEmpty) {
-                                    return 'State cannot be empty';
-                                  }
-                                  return null;
-                                },
-                                controller: value.stateController),
-                            const SizedBox(height: 15),
-                            CommonTextFormField(
-                              maxLength: 6,
+                                maxLength: 6,
                                 title: 'Pincode',
                                 fillColor: Colors.white,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 validator: (String? value) {
                                   if (value!.isEmpty) {
                                     return 'Pincode cannot be empty';
@@ -118,9 +122,12 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.pinCodeController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
-                              maxLength: 10,
+                                maxLength: 10,
                                 title: 'Mobile Number',
                                 fillColor: Colors.white,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 validator: (String? value) {
                                   if (value!.isEmpty) {
                                     return 'Mobile Number cannot be empty';
@@ -130,8 +137,11 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.mobileNumberController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
-                              maxLength: 12,
+                                maxLength: 12,
                                 title: 'Aadhar Number',
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 fillColor: Colors.white,
                                 validator: (String? value) {
                                   if (value!.isEmpty) {
@@ -142,7 +152,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.aadharNumberController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
-                              maxLength: 10,
+                                maxLength: 10,
                                 title: 'PAN Number',
                                 fillColor: Colors.white,
                                 validator: (String? value) {
@@ -154,7 +164,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.panNumberController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
-                              maxLength: 15,
+                                maxLength: 15,
                                 title: 'GST Number',
                                 fillColor: Colors.white,
                                 validator: (String? value) {
@@ -167,20 +177,16 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                             const SizedBox(height: 15),
                             DropdownButtonFormField<String>(
                               decoration: InputDecoration(
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                labelText: 'Mapped Principal Distributor',
-                              ),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none),
+                                  hintText: 'Mapped Principal Distributor'),
                               value: value.selectedDistributor,
-                              items:
-                                  value.distributors.map((String distributor) {
+                              items: value.pdList.map((GetPdResponse pd) {
                                 return DropdownMenuItem<String>(
-                                  value: distributor,
-                                  child: Text(distributor),
-                                );
+                                    value: pd.sId, child: Text(pd.name ?? ''));
                               }).toList(),
                               onChanged: (String? newValue) {
                                 setState(() {
@@ -188,7 +194,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 });
                               },
                               validator: (String? value) {
-                                if (value!.isEmpty) {
+                                if (value == null || value.isEmpty) {
                                   return 'Mapped Principal Distributor cannot be empty';
                                 }
                                 return null;
@@ -204,10 +210,10 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 text: 'CONTINUE',
                                 backgroundColor: const Color(0xff004791),
                                 onPressed: () {
-                                  // if (value.retailerDetailsFormKey.currentState!
-                                  //     .validate()) {
+                                  if (value.retailerDetailsFormKey.currentState!
+                                      .validate()) {
                                     value.tabController.animateTo(1);
-                              //    }
+                                  }
                                 },
                               ),
                             ),
@@ -219,5 +225,55 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                 ),
               ),
             ));
+  }
+}
+
+class CustomCountryStateCityPicker extends StatelessWidget {
+  final TextEditingController country;
+  final TextEditingController state;
+  final TextEditingController city;
+  final Color dialogColor;
+  final InputDecoration textFieldDecoration;
+
+  const CustomCountryStateCityPicker({
+    super.key,
+    required this.country,
+    required this.state,
+    required this.city,
+    required this.dialogColor,
+    required this.textFieldDecoration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextFormField(
+          controller: country,
+          decoration: textFieldDecoration.copyWith(
+            labelText: 'Country',
+            enabled: false,
+          ),
+        ),
+        const SizedBox(height: 15),
+        TextFormField(
+          controller: state,
+          decoration: textFieldDecoration.copyWith(labelText: 'State'),
+          readOnly: true,
+          onTap: () {
+            // Implement state selection logic for India
+          },
+        ),
+        const SizedBox(height: 15),
+        TextFormField(
+          controller: city,
+          decoration: textFieldDecoration.copyWith(labelText: 'City'),
+          readOnly: true,
+          onTap: () {
+            // Implement city selection logic based on selected state
+          },
+        ),
+      ],
+    );
   }
 }

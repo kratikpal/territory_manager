@@ -6,4 +6,6 @@ class ApiUrls {
   static const String markLeaveUrl = 'v1/markleave/territorymanager';
   static const String forgetPasswordUrl = 'territorymanager/forgot-password';
   static const String changePasswordUrl = 'territorymanager/password/update';
+  static const String createCollectKycUrl = '${baseUrl}kyc/create-tm';
+  static const String getPdUrl = 'kyc/get-pd-tm';
 }

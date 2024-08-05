@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                           builder: (context, value, child) =>
                               CommonTextFormField(
                                   controller: value.emailController,
+                                  keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter your email id';
@@ -105,6 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                             builder: (context, value, child) =>
                                 CommonTextFormField(
                                     controller: value.passwordController,
+                                    obscureText: true,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter your password';

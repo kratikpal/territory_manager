@@ -1,9 +1,8 @@
 import 'package:cheminova/provider/collect_kyc_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
-import 'package:cheminova/screens/data_submit_successfull.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class VerifyDocumentsScreen extends StatelessWidget {
@@ -22,21 +21,24 @@ class VerifyDocumentsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Consumer<CollectKycProvider>(
-                  builder: (BuildContext context, CollectKycProvider value, Widget? child) => _buildSection(
+                  builder: (BuildContext context, CollectKycProvider value,
+                          Widget? child) =>
+                      _buildSection(
                     'Retailer Details',
                     {
                       'Trade Name': value.tradeNameController.text,
                       'Name': value.nameController.text,
                       'Address': value.addressController.text,
-                      'Town/City':  value.townCityController.text,
+                      'Town/City': value.city.text,
                       'District': value.districtController.text,
-                      'State': value.stateController.text,
+                      'State': value.state.text,
                       'Pincode': value.pinCodeController.text,
                       'Mobile Number': value.mobileNumberController.text,
                       'Aadhar Number': value.aadharNumberController.text,
                       'PAN Number': value.panNumberController.text,
                       'GST Number': value.gstNumberController.text,
-                      'Mapped Principal Distributor': value.selectedDistributor ?? '',
+                      'Mapped Principal Distributor':
+                          value.selectedDistributor ?? '',
                     },
                     onEdit: () {
                       value.tabController.animateTo(0);
@@ -47,15 +49,27 @@ class VerifyDocumentsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Consumer<CollectKycProvider>(
-                  builder: (BuildContext context, CollectKycProvider value, Widget? child) => _buildSection(
+                  builder: (BuildContext context, CollectKycProvider value,
+                          Widget? child) =>
+                      _buildSection(
                     'Uploaded Documents',
                     {
-                      'PAN Card': 'pan_card.pdf',
-                      'Aadhar Card': 'aadhar_card.pdf',
-                      'GST Registration': 'gst_registration.pdf',
-                      'Pesticide License': 'pesticide_license.pdf',
-                      'Fertilizer License': 'fertilizer_license.pdf (Optional)',
-                      'Selfie of Entrance Board': 'entrance_board_selfie.jpg',
+                      'PAN Card':
+                          value.panCard?.path.split('/').last ?? 'Not uploaded',
+                      'Aadhar Card': value.aadharCard?.path.split('/').last ??
+                          'Not uploaded',
+                      'GST Registration':
+                          value.gstRegistration?.path.split('/').last ??
+                              'Not uploaded',
+                      'Pesticide License':
+                          value.pesticideLicense?.path.split('/').last ??
+                              'Not uploaded',
+                      'Fertilizer License':
+                          value.fertilizerLicense?.path.split('/').last ??
+                              'Not uploaded',
+                      'Selfie of Entrance Board':
+                          value.selfieEntranceBoard?.path.split('/').last ??
+                              'Not uploaded',
                     },
                     onEdit: () {
                       value.tabController.animateTo(1);
@@ -68,21 +82,19 @@ class VerifyDocumentsScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 Align(
                   alignment: Alignment.center,
-                  child: CommonElevatedButton(
-                    borderRadius: 30,
-                    width: double.infinity,
-                    height: kToolbarHeight - 10,
-                    text: ('SAVE AND CONFIRM'),
-                    backgroundColor: const Color(0xff004791),
-                    onPressed: () {
-                      // Handle final submission
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DataSubmitSuccessfull(),
-                        ),
-                      );
-                    },
+                  child: Consumer<CollectKycProvider>(
+                    builder: (context, value, child) => CommonElevatedButton(
+                      borderRadius: 30,
+                      width: double.infinity,
+                      height: kToolbarHeight - 10,
+                      text: ('SAVE AND CONFIRM'),
+                      backgroundColor: const Color(0xff004791),
+                      onPressed: () {
+                        // Handle final submission
+
+                        value.validateFields(context);
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -93,7 +105,8 @@ class VerifyDocumentsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, Map<String, String> details, {required VoidCallback onEdit}) {
+  Widget _buildSection(String title, Map<String, String> details,
+      {required VoidCallback onEdit}) {
     return Container(
       padding: const EdgeInsets.all(20.0),
       // margin: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -110,7 +123,8 @@ class VerifyDocumentsScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               ElevatedButton(
                 onPressed: onEdit,
@@ -126,7 +140,8 @@ class VerifyDocumentsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          ...details.entries.map((entry) => _buildDetailRow(entry.key, entry.value)),
+          ...details.entries
+              .map((entry) => _buildDetailRow(entry.key, entry.value)),
         ],
       ),
     );
@@ -146,9 +161,12 @@ class VerifyDocumentsScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 3,
-            child: Text(value),
-          ),
+              flex: 3,
+              child: Text(
+                value,
+                style: TextStyle(
+                    color: value == 'Not uploaded' ? Colors.red : Colors.black),
+              )),
         ],
       ),
     );

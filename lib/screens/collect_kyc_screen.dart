@@ -17,7 +17,10 @@ class CollectKycScreen extends StatefulWidget {
   State<CollectKycScreen> createState() => CollectKycScreenState();
 }
 
-class CollectKycScreenState extends State<CollectKycScreen> with SingleTickerProviderStateMixin{
+class CollectKycScreenState extends State<CollectKycScreen>
+    with SingleTickerProviderStateMixin {
+  late CollectKycProvider collectKycProvider;
+
   final _pages = [
     const RetailerDetailsScreen(),
     const UploadDocumentScreen(),
@@ -26,7 +29,8 @@ class CollectKycScreenState extends State<CollectKycScreen> with SingleTickerPro
 
   @override
   void initState() {
-    Provider.of<CollectKycProvider>(context,listen: false).tabController = TabController(length: 3, vsync: this);
+    collectKycProvider = CollectKycProvider();
+    collectKycProvider.tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -132,57 +136,65 @@ class CollectKycScreenState extends State<CollectKycScreen> with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CollectKycProvider>(
-      builder: (BuildContext context, value, Widget? child) => CommonBackground(
-          child: DefaultTabController(
-              length: 3,
-              child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  appBar: PreferredSize(
-                      preferredSize: const Size.fromHeight(100),
-                      child: CommonAppBar(
-                          actions: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Image.asset('assets/Back_attendance.png'),
-                              padding: const EdgeInsets.only(right: 20),
-                            ),
-                          ],
-                          title: const Text('Collect KYC Data',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Anek')),
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          bottom: TabBar(
-                              controller: value.tabController,
-
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              dividerColor: Colors.transparent,
-                              indicatorColor: Colors.yellow,
-                              labelColor: Colors.white,
-                              unselectedLabelColor: Colors.black,
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              indicator: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(10)),
-                              tabs: const [
-                                Tab(text: 'Details'),
-                                Tab(text: 'Documents'),
-                                Tab(text: 'Verify')
-                              ]))),
-                  drawer: const CommonDrawer(),
-                  body: TabBarView(
-                      controller: value.tabController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: _pages)))
-
-          ),
+    return ChangeNotifierProvider(
+      create: (context) => collectKycProvider,
+      child: Consumer<CollectKycProvider>(
+        builder: (BuildContext context, value, Widget? child) =>
+            Stack(children: [
+          CommonBackground(
+              child: DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                      backgroundColor: Colors.transparent,
+                      appBar: PreferredSize(
+                          preferredSize: const Size.fromHeight(100),
+                          child: CommonAppBar(
+                              actions: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon:
+                                      Image.asset('assets/Back_attendance.png'),
+                                  padding: const EdgeInsets.only(right: 20),
+                                ),
+                              ],
+                              title: const Text('Collect KYC Data',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Anek')),
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              bottom: TabBar(
+                                  controller: value.tabController,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  dividerColor: Colors.transparent,
+                                  indicatorColor: Colors.yellow,
+                                  labelColor: Colors.white,
+                                  unselectedLabelColor: Colors.black,
+                                  indicatorSize: TabBarIndicatorSize.tab,
+                                  indicator: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  tabs: const [
+                                    Tab(text: 'Details'),
+                                    Tab(text: 'Documents'),
+                                    Tab(text: 'Verify')
+                                  ]))),
+                      drawer: const CommonDrawer(),
+                      body: TabBarView(
+                          controller: value.tabController,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: _pages)))),
+          if (value.isLoading)
+            Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(child: CircularProgressIndicator()))
+        ]),
+      ),
     );
   }
 }

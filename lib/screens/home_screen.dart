@@ -1,5 +1,5 @@
 import 'package:cheminova/provider/user_provider.dart';
-import 'package:cheminova/screens/assign_task_screen.dart';
+import 'package:cheminova/screens/assign_task_dash_board_screen.dart';
 import 'package:cheminova/screens/calendar_screen.dart';
 import 'package:cheminova/screens/collect_kyc_screen.dart';
 import 'package:cheminova/screens/mark_attendence_screen.dart';
@@ -111,7 +111,8 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const AssignTaskScreen(),
+                              builder: (context) =>
+                                  const AssignTaskDashBoardScreen(),
                             ));
                       }),
                       const SizedBox(

@@ -12,6 +12,7 @@ class CommonTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
+  final bool obscureText;
 
   const CommonTextFormField({
     super.key,
@@ -25,6 +26,7 @@ class CommonTextFormField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.maxLength,
+    this.obscureText = false,
   });
 
   @override
@@ -47,6 +49,7 @@ class CommonTextFormField extends StatelessWidget {
           validator: validator,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
+          obscureText: obscureText,
           decoration: InputDecoration(
             hintText: title,
             contentPadding: const EdgeInsets.only(bottom: 10, left: 10),

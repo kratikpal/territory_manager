@@ -19,7 +19,7 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
       text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
   final timeController =
-  TextEditingController(text: DateFormat('hh:mm a').format(DateTime.now()));
+      TextEditingController(text: DateFormat('hh:mm a').format(DateTime.now()));
 
   final notesController = TextEditingController();
   final dealerController = TextEditingController();
@@ -28,7 +28,11 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
   final nextVisitDateController = TextEditingController();
 
   String selectedPurpose = 'Sales/Liquidation';
-  List<String> purposeOptions = ['Sales/Liquidation', 'Dues collection', 'Others'];
+  List<String> purposeOptions = [
+    'Sales/Liquidation',
+    'Dues collection',
+    'Others'
+  ];
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -72,8 +76,8 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
                 const SizedBox(height: 16),
                 Container(
                   padding:
-                  const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
-                  margin: const EdgeInsets.symmetric(horizontal: 30.0),
+                      const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
+                  // margin: const EdgeInsets.symmetric(horizontal: 30.0),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.white),
                       color: const Color(0xffB4D1E5).withOpacity(0.9),

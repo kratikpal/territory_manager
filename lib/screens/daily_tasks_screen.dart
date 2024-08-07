@@ -2,7 +2,7 @@ import 'package:cheminova/screens/collect_kyc_screen.dart';
 import 'package:cheminova/screens/update_inventory_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:cheminova/screens/Visit_Dealers_screen.dart';
+import 'package:cheminova/screens/visit_Dealers_screen.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:cheminova/widgets/common_background.dart';

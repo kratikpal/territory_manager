@@ -5,6 +5,7 @@ import 'package:cheminova/screens/collect_kyc_screen.dart';
 import 'package:cheminova/screens/mark_attendence_screen.dart';
 import 'package:cheminova/screens/notification_screen.dart';
 import 'package:cheminova/screens/products_manual_screen.dart';
+import 'package:cheminova/screens/rejected_application_screen.dart';
 import 'package:cheminova/screens/summary_screen.dart';
 import 'package:cheminova/screens/product_sales_data.dart';
 import 'package:cheminova/screens/update_inventory_screen.dart';
@@ -193,6 +194,22 @@ class _HomePageState extends State<HomePage> {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         const CollectKycScreen(),
+                                  ));
+                            }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildCustomCard('Rejected Applications',
+                                'Re-upload Rejected Documents', onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const RejectedApplicationScreen(),
                                   ));
                             }),
                           ),

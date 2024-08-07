@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/only_uppercase.dart';
 import '../widgets/common_elevated_button.dart';
 import '../widgets/common_text_form_field.dart';
 
@@ -152,6 +153,9 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.aadharNumberController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
+                                inputFormatters: [
+                                  UpperCaseTextFormatter(),
+                                ],
                                 maxLength: 10,
                                 title: 'PAN Number',
                                 fillColor: Colors.white,
@@ -164,6 +168,9 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                 controller: value.panNumberController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
+                                inputFormatters: [
+                                  UpperCaseTextFormatter(),
+                                ],
                                 maxLength: 15,
                                 title: 'GST Number',
                                 fillColor: Colors.white,

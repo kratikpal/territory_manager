@@ -158,7 +158,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             borderRadius: 30,
                             width: double.infinity,
                             height: kToolbarHeight - 10,
-                            text: 'SIGN IN',
+                            text: 'RESET PASSWORD',
                             isLoading: _isLoading,
                             onPressed: () {
                               _changePassword().then(

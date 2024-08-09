@@ -1,3 +1,4 @@
+import 'package:cheminova/notification_service.dart';
 import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/assign_task_dash_board_screen.dart';
 import 'package:cheminova/screens/calendar_screen.dart';
@@ -11,6 +12,7 @@ import 'package:cheminova/screens/product_sales_data.dart';
 import 'package:cheminova/screens/update_inventory_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/screens/daily_tasks_screen.dart';
@@ -24,11 +26,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  NotificationServices notificationServices = NotificationServices();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProvider>(context, listen: false).fetchUserProfile();
+    });
+    notificationServices.requestNotificationPermission();
+
+    notificationServices.getDeviceToken().then((value) {
+      print('Device Token: $value');
     });
   }
 

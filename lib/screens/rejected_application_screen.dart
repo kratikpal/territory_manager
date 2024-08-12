@@ -104,7 +104,7 @@ class MyListView extends StatelessWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text((DateFormat("dd/MMMM/yyyy")
+                Text((DateFormat("dd MMMM yyyy")
                     .format(DateTime.parse(item.createdAt ?? '')))),
                 Text(item.sId ?? ''),
                 for (var note in item.notes!) Text(note.message ?? ''),

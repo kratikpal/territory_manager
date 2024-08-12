@@ -106,7 +106,6 @@ class _LoginPageState extends State<LoginPage> {
                             builder: (context, value, child) =>
                                 CommonTextFormField(
                                     controller: value.passwordController,
-                                    obscureText: true,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter your password';

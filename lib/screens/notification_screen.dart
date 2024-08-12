@@ -86,48 +86,60 @@ class MyListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return value.notificationList.isEmpty
-        ? const Center(
-            child: Text(
-              'No Notifications',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Anek',
+    // Group notifications by date
+    Map<String, List<Notifications>> groupedNotifications = {};
+
+    for (var notification in value.notificationList) {
+      String date = DateFormat("dd MMM yyyy")
+          .format(DateTime.parse(notification.createdAt ?? ''));
+      if (!groupedNotifications.containsKey(date)) {
+        groupedNotifications[date] = [];
+      }
+      groupedNotifications[date]!.add(notification);
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 15),
+      itemCount: groupedNotifications.length,
+      itemBuilder: (context, index) {
+        String date = groupedNotifications.keys.elementAt(index);
+        List<Notifications> notificationsForDate = groupedNotifications[date]!;
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Display the date once
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  date,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-          )
-        : ListView.builder(
-            padding: const EdgeInsets.only(top: 15),
-            itemCount: value.notificationList.length,
-            itemBuilder: (context, index) {
-              Notifications item = value.notificationList[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                child: ExpansionTile(
-                  collapsedBackgroundColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  trailing: const SizedBox.shrink(),
-                  title: Text(
-                    item.title ?? '',
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.w500),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (DateFormat("dd/MMM/yyyy").format(
-                          DateTime.parse(item.createdAt ?? ''),
-                        )),
-                      ),
-                      Text(item.msg ?? ''),
-                    ],
+              // Display notifications for the date
+              ...notificationsForDate.map(
+                (item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: ExpansionTile(
+                    collapsedBackgroundColor: Colors.white,
+                    backgroundColor: Colors.white,
+                    trailing: const SizedBox.shrink(),
+                    title: Text(
+                      item.title ?? '',
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Text(item.msg ?? ''),
                   ),
                 ),
-              );
-            },
-          );
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

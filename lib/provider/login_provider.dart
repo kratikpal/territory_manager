@@ -1,8 +1,10 @@
+import 'package:cheminova/notification_service.dart';
 import 'package:cheminova/services/api_client.dart';
 import 'package:cheminova/services/api_urls.dart';
 import 'package:cheminova/services/secure__storage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
 
 class LoginProvider extends ChangeNotifier {
   final _storageService = SecureStorageService();
@@ -31,26 +33,16 @@ class LoginProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         await _storageService.write(
             key: 'access_token', value: response.data['token']);
+        final fcmToken = await NotificationServices().getDeviceToken();
+        print('fcmToken: $fcmToken');
+        await _apiClient.post(ApiUrls.fcmUrl, data: {'fcmToken': fcmToken});
         return (true, response.data['message'].toString());
       } else {
         return (false, response.data['message'].toString());
       }
-    } on DioException catch (e) {
-      setLoading(false);
-
-      if (e.response?.data is Map<String, dynamic>) {
-        return (
-          false,
-          e.response?.data['message'].toString() ?? 'something went wrong'
-        );
-      } else if (e.response?.data is String) {
-        return (false, e.response?.data.toString() ?? 'something went wrong');
-      } else {
-        return (false, 'something went wrong');
-      }
     } catch (e) {
       setLoading(false);
-      return (false, 'something went wrong');
+      return (false, 'Something want wrong');
     }
   }
 }

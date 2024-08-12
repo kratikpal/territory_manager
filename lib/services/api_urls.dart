@@ -10,4 +10,5 @@ class ApiUrls {
   static const String getPdUrl = 'kyc/get-pd-tm';
   static const String rejectedApplication = '${baseUrl}kyc/getAllrejected-tm';
   static const String notificationUrl = '$baseUrl/get-notification-tm';
+  static const String fcmUrl = '${baseUrl}kyc/save-fcm-tm';
 }

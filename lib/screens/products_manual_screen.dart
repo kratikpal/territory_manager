@@ -5,7 +5,7 @@ import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
 
 class ProductsManualScreen extends StatelessWidget {
-  const ProductsManualScreen({Key? key}) : super(key: key);
+  const ProductsManualScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

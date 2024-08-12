@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cheminova/models/get_pd_response.dart';
 import 'package:cheminova/screens/data_submit_successfull.dart';
 import 'package:cheminova/services/api_client.dart';
-import 'package:cheminova/services/secure__storage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -217,10 +216,6 @@ class CollectKycProvider extends ChangeNotifier {
   }
 
   Future<void> submitCollectKycForm(BuildContext context) async {
-    final dio = Dio();
-    final token = await SecureStorageService().read(key: 'access_token');
-    final headers = {'Authorization': 'Bearer $token'};
-
     // Construct the FormData
     final data = FormData.fromMap({
       'name': nameController.text.trim(),
@@ -236,22 +231,28 @@ class CollectKycProvider extends ChangeNotifier {
       'aadhar_number': aadharNumberController.text.trim(),
       'gst_number': gstNumberController.text.trim(),
       if (panCard != null)
-        'pan_img': await MultipartFile.fromFile(panCard!.path, filename: 'pan_card.jpg'),
+        'pan_img': await MultipartFile.fromFile(panCard!.path,
+            filename: 'pan_card.jpg'),
       if (aadharCard != null)
-        'aadhar_img': await MultipartFile.fromFile(aadharCard!.path, filename: 'aadhar_card.jpg'),
+        'aadhar_img': await MultipartFile.fromFile(aadharCard!.path,
+            filename: 'aadhar_card.jpg'),
       if (gstRegistration != null)
-        'gst_img': await MultipartFile.fromFile(gstRegistration!.path, filename: 'gst_registration.jpg'),
+        'gst_img': await MultipartFile.fromFile(gstRegistration!.path,
+            filename: 'gst_registration.jpg'),
       if (pesticideLicense != null)
-        'pesticide_license_img': await MultipartFile.fromFile(pesticideLicense!.path, filename: 'pesticide_license.jpg'),
+        'pesticide_license_img': await MultipartFile.fromFile(
+            pesticideLicense!.path,
+            filename: 'pesticide_license.jpg'),
       if (selfieEntranceBoard != null)
-        'selfie_entrance_img': await MultipartFile.fromFile(selfieEntranceBoard!.path, filename: 'selfie_entrance_board.jpg'),
+        'selfie_entrance_img': await MultipartFile.fromFile(
+            selfieEntranceBoard!.path,
+            filename: 'selfie_entrance_board.jpg'),
     });
 
     setLoading(true);
     try {
-
-      Response response = await _apiClient.post(ApiUrls.createCollectKycUrl,
-          data: data);
+      Response response =
+          await _apiClient.post(ApiUrls.createCollectKycUrl, data: data);
 
       setLoading(false);
 

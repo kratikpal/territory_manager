@@ -178,8 +178,8 @@ class _ProductBlockState extends State<ProductBlock> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Product: ${widget.product.name}',style: TextStyle(fontSize: 16),),
-            Text('SKU: ${widget.product.sku}',style: TextStyle(fontSize: 15),),
+            Text('Product: ${widget.product.name}',style: const TextStyle(fontSize: 16),),
+            Text('SKU: ${widget.product.sku}',style: const TextStyle(fontSize: 15),),
             const SizedBox(height: 8),
             TextField(
               controller: saleController,

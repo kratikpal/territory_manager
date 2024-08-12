@@ -12,7 +12,6 @@ import 'package:cheminova/screens/product_sales_data.dart';
 import 'package:cheminova/screens/update_inventory_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/screens/daily_tasks_screen.dart';
@@ -277,6 +276,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => throw Exception(),
+                  child: const Text("Throw Test Exception"),
                 ),
               ],
             ),

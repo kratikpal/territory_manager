@@ -4,6 +4,7 @@ import 'package:cheminova/provider/collect_kyc_provider.dart';
 import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,14 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   if (!kIsWeb) {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -40,13 +49,15 @@ Future<void> main() async {
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-                android: AndroidNotificationDetails(channel.id, channel.name,
-                    icon: '@mipmap/ic_launcher', importance: Importance.max),
-                iOS: const DarwinNotificationDetails()));
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(channel.id, channel.name,
+                icon: '@mipmap/ic_launcher', importance: Importance.max),
+            iOS: const DarwinNotificationDetails(),
+          ),
+        );
         const AndroidInitializationSettings initializationSettingsAndroid =
             AndroidInitializationSettings('@mipmap/ic_launcher');
         const DarwinInitializationSettings darwinInitializationSettings =

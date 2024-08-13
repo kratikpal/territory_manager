@@ -1,9 +1,9 @@
+import 'package:cheminova/screens/Add_products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
-import 'package:cheminova/screens/data_submit_successfull.dart';
 
 class UpdateInventoryScreen extends StatefulWidget {
   const UpdateInventoryScreen({super.key});
@@ -13,28 +13,14 @@ class UpdateInventoryScreen extends StatefulWidget {
 }
 
 class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
-  final searchController = TextEditingController();
-  List<Product> products = [
-    Product(name: 'Product A', sku: 'SKU001', isPurchased: true),
-    Product(name: 'Product B', sku: 'SKU002', isPurchased: true),
-    Product(name: 'Product C', sku: 'SKU003', isPurchased: false),
-  ];
-
-  List<Product> filteredProducts = [];
+  final List<String> principalDistributors = ['vaibhav', 'sonu', 'monu'];
+  final List<String> retailerDistributors = ['shivam', 'vivek'];
+  String? selectedDistributorType;
+  String? selectedDistributor;
 
   @override
   void initState() {
     super.initState();
-    filteredProducts = products;
-  }
-
-  void filterProducts(String query) {
-    setState(() {
-      filteredProducts = products
-          .where((product) =>
-          product.name.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
   }
 
   @override
@@ -62,152 +48,92 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
           elevation: 0,
         ),
         drawer: const CommonDrawer(),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  labelText: 'Search',
-                  suffixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CommonElevatedButton(
+            borderRadius: 30,
+            width: double.infinity,
+            height: kToolbarHeight - 10,
+            text: 'SUBMIT',
+            backgroundColor: const Color(0xff004791),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddProductsScreen(),
                 ),
-                onChanged: filterProducts,
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredProducts.length,
-                itemBuilder: (context, index) {
-                  return ProductBlock(product: filteredProducts[index]);
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: CommonElevatedButton(
-                borderRadius: 30,
-                width: double.infinity,
-                height: kToolbarHeight - 10,
-                text: 'SUBMIT',
-                backgroundColor: const Color(0xff004791),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DataSubmitSuccessfull(),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class Product {
-  final String name;
-  final String sku;
-  final bool isPurchased;
-  int? sale;
-  int? inventory;
-  String? liquidation;
-
-  Product({
-    required this.name,
-    required this.sku,
-    required this.isPurchased,
-    this.sale,
-    this.inventory,
-    this.liquidation,
-  });
-}
-
-class ProductBlock extends StatefulWidget {
-  final Product product;
-
-  const ProductBlock({super.key, required this.product});
-
-  @override
-  _ProductBlockState createState() => _ProductBlockState();
-}
-
-class _ProductBlockState extends State<ProductBlock> {
-  final saleController = TextEditingController();
-  final inventoryController = TextEditingController();
-  final liquidationController = TextEditingController();
-  String? errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    saleController.text = widget.product.sale?.toString() ?? '';
-    inventoryController.text = widget.product.inventory?.toString() ?? '';
-    liquidationController.text = widget.product.liquidation ?? '';
-  }
-
-  void validateInput() {
-    setState(() {
-      if (saleController.text.isNotEmpty && inventoryController.text.isNotEmpty) {
-        int sale = int.parse(saleController.text);
-        int inventory = int.parse(inventoryController.text);
-        if (inventory > sale) {
-          errorMessage = 'Inventory should be less than or equal to sales';
-        } else {
-          errorMessage = null;
-        }
-      } else {
-        errorMessage = null;
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: !widget.product.isPurchased?Colors.white54:Colors.white,
-      margin: const EdgeInsets.all(8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Stack(
           children: [
-            Text('Product: ${widget.product.name}',style: const TextStyle(fontSize: 16),),
-            Text('SKU: ${widget.product.sku}',style: const TextStyle(fontSize: 15),),
-            const SizedBox(height: 8),
-            TextField(
-              controller: saleController,
-              decoration: const InputDecoration(labelText: 'Sale'),
-              keyboardType: TextInputType.number,
-              enabled: widget.product.isPurchased,
-              onChanged: (_) => validateInput(),
-            ),
-            TextField(
-              controller: inventoryController,
-              decoration: const InputDecoration(labelText: 'Inventory'),
-              keyboardType: TextInputType.number,
-              enabled: widget.product.isPurchased,
-              onChanged: (_) => validateInput(),
-            ),
-            TextField(
-              controller: liquidationController,
-              decoration: const InputDecoration(labelText: 'Liquidation'),
-              enabled: widget.product.isPurchased,
-            ),
-            if (errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  errorMessage!,
-                  style: const TextStyle(color: Colors.red),
+            Column(
+              children: [
+                // Dropdown for selecting distributor type
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 25),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: 'Select Distributor Type',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(),
+                    ),
+                    value: selectedDistributorType,
+                    items: ['Principal Distributor', 'Retailer Distributor']
+                        .map((String type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDistributorType = value;
+                        selectedDistributor =
+                            null; // Reset distributor selection when type changes
+                      });
+                    },
+                  ),
                 ),
-              ),
+                // Dropdown for selecting distributor name based on type
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 25),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: 'Select Distributor Name',
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(),
+                    ),
+                    value: selectedDistributor,
+                    items: (selectedDistributorType == 'Principal Distributor'
+                            ? principalDistributors
+                            : retailerDistributors)
+                        .map((String distributor) {
+                      return DropdownMenuItem<String>(
+                        value: distributor,
+                        child: Text(distributor),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDistributor = value;
+                      });
+                    },
+                    // Disable the dropdown if no distributor type is selected
+                    isExpanded: true,
+                    isDense: true,
+                    iconSize: 24,
+                    hint: Text(
+                        'Please select a ${selectedDistributorType ?? "Distributor Type"} first'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

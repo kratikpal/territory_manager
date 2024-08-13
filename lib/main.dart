@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cheminova/provider/collect_kyc_provider.dart';
+import 'package:cheminova/provider/product_provider.dart';
 import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -96,6 +97,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => CollectKycProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
       child: const MyApp(),
     ),

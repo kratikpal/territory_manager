@@ -36,7 +36,7 @@ class CommonElevatedButton extends StatelessWidget {
                     ? const CircularProgressIndicator(
                         backgroundColor: Colors.white,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.black))
-                    : Text(text ?? 'Submit',
+                    : Text(text,
                         style: const TextStyle(
                             fontSize: 15,
                             color: Colors.white,

@@ -23,6 +23,8 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   @override
   void initState() {
     super.initState();
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+    filteredProducts = provider.productList;
   }
 
   void filterProducts(String query) {
@@ -69,8 +71,6 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
             if (provider.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-
-            filteredProducts = provider.productList;
 
             return Stack(
               children: [

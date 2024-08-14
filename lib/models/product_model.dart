@@ -47,6 +47,8 @@ class Product {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int v;
+  int? sale;
+  int? inventory;
 
   Product({
     required this.id,
@@ -63,6 +65,8 @@ class Product {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    this.sale,
+    this.inventory,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {

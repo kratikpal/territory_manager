@@ -16,7 +16,6 @@ class AddProductsScreen extends StatefulWidget {
 }
 
 class _AddProductsScreenState extends State<AddProductsScreen> {
-  List<Product> selectedProducts = [];
   List<Product> filteredProducts = [];
   final searchController = TextEditingController();
   late ProductProvider provider;
@@ -28,7 +27,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   }
 
   Future<void> loadProducts() async {
-    final provider = Provider.of<ProductProvider>(context, listen: false);
+    provider = Provider.of<ProductProvider>(context, listen: false);
     await provider.getProducts();
     setState(() {
       filteredProducts = provider.productList;
@@ -87,20 +86,19 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
               children: [
                 Column(
                   children: [
-                    if (selectedProducts.isNotEmpty)
+                    if (provider.selectedProducts.isNotEmpty)
                       Expanded(
                         child: ListView.builder(
-                          itemCount: selectedProducts.length,
+                          itemCount: provider.selectedProducts.length,
                           itemBuilder: (context, index) {
-                            return ProductBlock(
-                                product: selectedProducts[index]);
+                            return ProductBlock(index: index);
                           },
                         ),
                       ),
                   ],
                 ),
                 Align(
-                  alignment: selectedProducts.isEmpty
+                  alignment: provider.selectedProducts.isEmpty
                       ? Alignment.center
                       : Alignment.bottomCenter,
                   child: Padding(
@@ -146,9 +144,10 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                                                   filteredProducts.length,
                                               itemBuilder: (context, index) {
                                                 bool isAlreadySelected =
-                                                    selectedProducts.contains(
-                                                        filteredProducts[
-                                                            index]);
+                                                    provider.selectedProducts
+                                                        .contains(
+                                                            filteredProducts[
+                                                                index]);
                                                 return Card(
                                                   child: ListTile(
                                                     title: Text(
@@ -173,8 +172,9 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                                                         ? null
                                                         : () {
                                                             setState(() {
-                                                              selectedProducts.add(
-                                                                  filteredProducts[
+                                                              provider
+                                                                  .selectedProducts
+                                                                  .add(filteredProducts[
                                                                       index]);
                                                             });
                                                             Navigator.pop(
@@ -202,7 +202,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
-                        if (selectedProducts.isNotEmpty) ...[
+                        if (provider.selectedProducts.isNotEmpty) ...[
                           const SizedBox(height: 16.0),
                           CommonElevatedButton(
                             borderRadius: 30,
@@ -211,13 +211,19 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                             text: 'SUBMIT',
                             backgroundColor: const Color(0xff004791),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DataSubmitSuccessfull(),
-                                ),
-                              );
+                              provider
+                                  .submitSelectedProducts("PrincipalDistributor", "66a0e19c981736b70ed4e34e")
+                                  .then((value) {
+                                if (value) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DataSubmitSuccessfull(),
+                                    ),
+                                  );
+                                }
+                              });
                             },
                           ),
                         ],
@@ -235,9 +241,9 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
 }
 
 class ProductBlock extends StatefulWidget {
-  final Product product;
+  final int index;
 
-  const ProductBlock({super.key, required this.product});
+  const ProductBlock({super.key, required this.index});
 
   @override
   _ProductBlockState createState() => _ProductBlockState();
@@ -247,13 +253,15 @@ class _ProductBlockState extends State<ProductBlock> {
   final saleController = TextEditingController();
   final inventoryController = TextEditingController();
   String? errorMessage;
+  late ProductProvider provider;
 
   @override
   void initState() {
     super.initState();
+    provider = Provider.of<ProductProvider>(context, listen: false);
   }
 
-  void validateInput() {
+  bool validateInput() {
     setState(() {
       if (saleController.text.isNotEmpty &&
           inventoryController.text.isNotEmpty) {
@@ -268,6 +276,7 @@ class _ProductBlockState extends State<ProductBlock> {
         errorMessage = null;
       }
     });
+    return errorMessage == null;
   }
 
   @override
@@ -281,9 +290,9 @@ class _ProductBlockState extends State<ProductBlock> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Product: ${widget.product.name}',
+            Text('Product: ${provider.selectedProducts[widget.index].name}',
                 style: const TextStyle(fontSize: 16)),
-            Text('SKU: ${widget.product.SKU}',
+            Text('SKU: ${provider.selectedProducts[widget.index].SKU}',
                 style: const TextStyle(fontSize: 15)),
             const SizedBox(height: 8),
             TextField(
@@ -292,7 +301,10 @@ class _ProductBlockState extends State<ProductBlock> {
               keyboardType: TextInputType.number,
               // enabled: widget.product.isPurchased,
               enabled: true,
-              onChanged: (_) => validateInput(),
+              onChanged: (_) => validateInput()
+                  ? provider.selectedProducts[widget.index].sale =
+                      int.parse(saleController.text)
+                  : null,
             ),
             TextField(
               controller: inventoryController,
@@ -300,7 +312,10 @@ class _ProductBlockState extends State<ProductBlock> {
               keyboardType: TextInputType.number,
               // enabled: widget.product.isPurchased,
               enabled: true,
-              onChanged: (_) => validateInput(),
+              onChanged: (_) => validateInput()
+                  ? provider.selectedProducts[widget.index].inventory =
+                      int.parse(inventoryController.text)
+                  : null,
             ),
             if (errorMessage != null)
               Padding(

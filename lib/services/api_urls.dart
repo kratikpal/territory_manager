@@ -14,4 +14,5 @@ class ApiUrls {
   static const String getProducts = '${baseUrl}product/getAll/user/';
   static const String getPdRdUrl =
       'inventory/distributors-TM/RetailDistributor';
+  static const String submitProducts = 'inventory/add-TM';
 }

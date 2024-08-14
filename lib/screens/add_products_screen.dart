@@ -19,12 +19,20 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   List<Product> selectedProducts = [];
   List<Product> filteredProducts = [];
   final searchController = TextEditingController();
+  late ProductProvider provider;
 
   @override
   void initState() {
     super.initState();
+    loadProducts();
+  }
+
+  Future<void> loadProducts() async {
     final provider = Provider.of<ProductProvider>(context, listen: false);
-    filteredProducts = provider.productList;
+    await provider.getProducts();
+    setState(() {
+      filteredProducts = provider.productList;
+    });
   }
 
   void filterProducts(String query) {
@@ -56,12 +64,15 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
               padding: const EdgeInsets.only(right: 20),
             ),
           ],
-          title: const Text('Add Products',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Anek')),
+          title: const Text(
+            'Add Products',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Anek',
+            ),
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -100,73 +111,84 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                         FloatingActionButton.extended(
                           onPressed: () {
                             showModalBottomSheet(
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * 0.9,
+                              ),
                               context: context,
                               builder: (BuildContext context) {
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: TextField(
-                                            controller: searchController,
-                                            decoration: const InputDecoration(
-                                              labelText:
-                                                  'Search by name or SKU',
-                                              border: OutlineInputBorder(),
-                                              prefixIcon: Icon(Icons.search),
+                                return Consumer<ProductProvider>(
+                                  builder: (context, value, child) =>
+                                      StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(18.0),
+                                            child: TextField(
+                                              controller: searchController,
+                                              decoration: const InputDecoration(
+                                                labelText:
+                                                    'Search by name or SKU',
+                                                border: OutlineInputBorder(),
+                                                prefixIcon: Icon(Icons.search),
+                                              ),
+                                              onChanged: (value) {
+                                                filterProducts(value);
+                                                setState(() {});
+                                              },
                                             ),
-                                            onChanged: (value) {
-                                              filterProducts(value);
-                                              setState(() {});
-                                            },
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: ListView.builder(
-                                            itemCount: filteredProducts.length,
-                                            itemBuilder: (context, index) {
-                                              bool isAlreadySelected =
-                                                  selectedProducts.contains(
-                                                      filteredProducts[index]);
-                                              return Card(
-                                                child: ListTile(
-                                                  title: Text(
-                                                    filteredProducts[index]
-                                                        .name,
-                                                    style: TextStyle(
-                                                      color: isAlreadySelected
-                                                          ? Colors.grey
-                                                          : Colors.black,
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemCount:
+                                                  filteredProducts.length,
+                                              itemBuilder: (context, index) {
+                                                bool isAlreadySelected =
+                                                    selectedProducts.contains(
+                                                        filteredProducts[
+                                                            index]);
+                                                return Card(
+                                                  child: ListTile(
+                                                    title: Text(
+                                                      filteredProducts[index]
+                                                          .name,
+                                                      style: TextStyle(
+                                                        color: isAlreadySelected
+                                                            ? Colors.grey
+                                                            : Colors.black,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  subtitle: Text(
-                                                    filteredProducts[index].SKU,
-                                                    style: TextStyle(
-                                                      color: isAlreadySelected
-                                                          ? Colors.grey
-                                                          : Colors.black,
+                                                    subtitle: Text(
+                                                      filteredProducts[index]
+                                                          .SKU,
+                                                      style: TextStyle(
+                                                        color: isAlreadySelected
+                                                            ? Colors.grey
+                                                            : Colors.black,
+                                                      ),
                                                     ),
+                                                    onTap: isAlreadySelected
+                                                        ? null
+                                                        : () {
+                                                            setState(() {
+                                                              selectedProducts.add(
+                                                                  filteredProducts[
+                                                                      index]);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
                                                   ),
-                                                  onTap: isAlreadySelected
-                                                      ? null
-                                                      : () {
-                                                          setState(() {
-                                                            selectedProducts.add(
-                                                                filteredProducts[
-                                                                    index]);
-                                                          });
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                ),
-                                              );
-                                            },
+                                                );
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                        ],
+                                      );
+                                    },
+                                  ),
                                 );
                               },
                             ).whenComplete(() {

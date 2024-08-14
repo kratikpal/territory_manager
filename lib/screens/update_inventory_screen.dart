@@ -1,9 +1,11 @@
-import 'package:cheminova/screens/Add_products_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:cheminova/provider/pd_rd_provider.dart';
+import 'package:cheminova/screens/add_products_screen.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UpdateInventoryScreen extends StatefulWidget {
   const UpdateInventoryScreen({super.key});
@@ -13,14 +15,17 @@ class UpdateInventoryScreen extends StatefulWidget {
 }
 
 class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
-  final List<String> principalDistributors = ['vaibhav', 'sonu', 'monu'];
-  final List<String> retailerDistributors = ['shivam', 'vivek'];
   String? selectedDistributorType;
   String? selectedDistributor;
 
   @override
   void initState() {
     super.initState();
+    // Fetch the PdRd data when the screen is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<PdRdProvider>(context, listen: false);
+      provider.getPdRd();
+    });
   }
 
   @override
@@ -66,75 +71,97 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             },
           ),
         ),
-        body: Stack(
-          children: [
-            Column(
+        body: Consumer<PdRdProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (provider.pdRdList.isEmpty) {
+              return const Center(child: Text('No distributors available.'));
+            }
+
+            List<String> principalDistributors = provider.pdRdList
+                .where((item) => item.userType == 'SalesCoOrdinator')
+                .map((item) => item.name)
+                .toList();
+
+            List<String> retailerDistributors = provider.pdRdList
+                .where((item) => item.userType != 'SalesCoOrdinator')
+                .map((item) => item.name)
+                .toList();
+
+            return Stack(
               children: [
-                // Dropdown for selecting distributor type
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 25),
-                  child: DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: 'Select Distributor Type',
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: OutlineInputBorder(),
+                Column(
+                  children: [
+                    // Dropdown for selecting distributor type
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 25),
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Select Distributor Type',
+                          fillColor: Colors.white,
+                          filled: true,
+                          border: OutlineInputBorder(),
+                        ),
+                        value: selectedDistributorType,
+                        items: ['Principal Distributor', 'Retailer Distributor']
+                            .map((String type) {
+                          return DropdownMenuItem<String>(
+                            value: type,
+                            child: Text(type),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDistributorType = value;
+                            selectedDistributor =
+                                null; // Reset distributor selection when type changes
+                          });
+                        },
+                      ),
                     ),
-                    value: selectedDistributorType,
-                    items: ['Principal Distributor', 'Retailer Distributor']
-                        .map((String type) {
-                      return DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDistributorType = value;
-                        selectedDistributor =
-                            null; // Reset distributor selection when type changes
-                      });
-                    },
-                  ),
-                ),
-                // Dropdown for selecting distributor name based on type
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 25),
-                  child: DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: 'Select Distributor Name',
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: OutlineInputBorder(),
+                    // Dropdown for selecting distributor name based on type
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 25),
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Select Distributor Name',
+                          fillColor: Colors.white,
+                          filled: true,
+                          border: OutlineInputBorder(),
+                        ),
+                        value: selectedDistributor,
+                        items:
+                            (selectedDistributorType == 'Principal Distributor'
+                                    ? principalDistributors
+                                    : retailerDistributors)
+                                .map((String distributor) {
+                          return DropdownMenuItem<String>(
+                            value: distributor,
+                            child: Text(distributor),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDistributor = value;
+                          });
+                        },
+                        isExpanded: true,
+                        isDense: true,
+                        iconSize: 24,
+                        hint: Text(
+                            'Please select a ${selectedDistributorType ?? "Distributor Type"} first'),
+                      ),
                     ),
-                    value: selectedDistributor,
-                    items: (selectedDistributorType == 'Principal Distributor'
-                            ? principalDistributors
-                            : retailerDistributors)
-                        .map((String distributor) {
-                      return DropdownMenuItem<String>(
-                        value: distributor,
-                        child: Text(distributor),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedDistributor = value;
-                      });
-                    },
-                    // Disable the dropdown if no distributor type is selected
-                    isExpanded: true,
-                    isDense: true,
-                    iconSize: 24,
-                    hint: Text(
-                        'Please select a ${selectedDistributorType ?? "Distributor Type"} first'),
-                  ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cheminova/provider/collect_kyc_provider.dart';
+import 'package:cheminova/provider/pd_rd_provider.dart';
 import 'package:cheminova/provider/product_provider.dart';
 import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/splash_screen.dart';
@@ -98,6 +99,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => CollectKycProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => PdRdProvider()),
       ],
       child: const MyApp(),
     ),

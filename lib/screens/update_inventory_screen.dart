@@ -1,3 +1,4 @@
+import 'package:cheminova/models/pd_rd_response_model.dart';
 import 'package:cheminova/provider/pd_rd_provider.dart';
 import 'package:cheminova/screens/add_products_screen.dart';
 import 'package:cheminova/widgets/common_background.dart';
@@ -16,7 +17,7 @@ class UpdateInventoryScreen extends StatefulWidget {
 
 class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
   String? selectedDistributorType;
-  String? selectedDistributor;
+  PdRdResponseModel? selectedDistributor;
 
   @override
   void initState() {
@@ -83,14 +84,12 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
               return const Center(child: Text('No distributors available.'));
             }
 
-            List<String> principalDistributors = provider.pdRdList
+            List<PdRdResponseModel> principalDistributors = provider.pdRdList
                 .where((item) => item.userType == 'SalesCoOrdinator')
-                .map((item) => item.name)
                 .toList();
 
-            List<String> retailerDistributors = provider.pdRdList
+            List<PdRdResponseModel> retailerDistributors = provider.pdRdList
                 .where((item) => item.userType != 'SalesCoOrdinator')
-                .map((item) => item.name)
                 .toList();
 
             return Stack(
@@ -126,39 +125,40 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                       ),
                     ),
                     // Dropdown for selecting distributor name based on type
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 25),
-                      child: DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          labelText: 'Select Distributor Name',
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
+                    if (selectedDistributorType != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 25),
+                        child: DropdownButtonFormField<PdRdResponseModel>(
+                          decoration: const InputDecoration(
+                            labelText: 'Select Distributor Name',
+                            fillColor: Colors.white,
+                            filled: true,
+                            border: OutlineInputBorder(),
+                          ),
+                          value: selectedDistributor,
+                          items: (selectedDistributorType ==
+                                      'Principal Distributor'
+                                  ? principalDistributors
+                                  : retailerDistributors)
+                              .map((PdRdResponseModel distributor) {
+                            return DropdownMenuItem<PdRdResponseModel>(
+                              value: distributor,
+                              child: Text(distributor.name),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedDistributor = value;
+                            });
+                          },
+                          isExpanded: true,
+                          isDense: true,
+                          iconSize: 24,
+                          hint: Text(
+                              'Please select a ${selectedDistributorType ?? "Distributor Type"} first'),
                         ),
-                        value: selectedDistributor,
-                        items:
-                            (selectedDistributorType == 'Principal Distributor'
-                                    ? principalDistributors
-                                    : retailerDistributors)
-                                .map((String distributor) {
-                          return DropdownMenuItem<String>(
-                            value: distributor,
-                            child: Text(distributor),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedDistributor = value;
-                          });
-                        },
-                        isExpanded: true,
-                        isDense: true,
-                        iconSize: 24,
-                        hint: Text(
-                            'Please select a ${selectedDistributorType ?? "Distributor Type"} first'),
                       ),
-                    ),
                   ],
                 ),
               ],

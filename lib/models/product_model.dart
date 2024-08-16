@@ -2,13 +2,13 @@ class ProductResponse {
   final bool success;
   final int totalData;
   final int totalPages;
-  final List<Product> product;
+  final List<Product> products;
 
   ProductResponse({
     required this.success,
     required this.totalData,
     required this.totalPages,
-    required this.product,
+    required this.products,
   });
 
   factory ProductResponse.fromJson(Map<String, dynamic> json) {
@@ -16,7 +16,7 @@ class ProductResponse {
       success: json['success'],
       totalData: json['total_data'],
       totalPages: json['total_pages'],
-      product: (json['product'] as List)
+      products: (json['products'] as List)
           .map((item) => Product.fromJson(item))
           .toList(),
     );
@@ -27,7 +27,7 @@ class ProductResponse {
       'success': success,
       'total_data': totalData,
       'total_pages': totalPages,
-      'product': product.map((item) => item.toJson()).toList(),
+      'products': products.map((item) => item.toJson()).toList(),
     };
   }
 }
@@ -85,6 +85,8 @@ class Product {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       v: json['__v'],
+      sale: json['sale'], // Nullable field
+      inventory: json['inventory'], // Nullable field
     );
   }
 
@@ -104,6 +106,8 @@ class Product {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       '__v': v,
+      'sale': sale, // Nullable field
+      'inventory': inventory, // Nullable field
     };
   }
 }

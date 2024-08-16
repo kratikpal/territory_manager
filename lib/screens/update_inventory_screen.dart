@@ -65,12 +65,21 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             text: 'SUBMIT',
             backgroundColor: const Color(0xff004791),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddProductsScreen(),
-                ),
-              );
+              if(selectedDistributor == null || selectedDistributorType == null){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please select distributor type and distributor')),
+                );
+              }else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddProductsScreen(
+                      distributor: selectedDistributor!,
+                      distributorType: selectedDistributorType!,
+                    ),
+                  ),
+                );
+              }
             },
           ),
         ),

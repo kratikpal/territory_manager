@@ -1,3 +1,4 @@
+import 'package:cheminova/models/pd_rd_response_model.dart';
 import 'package:cheminova/models/product_model.dart';
 import 'package:cheminova/provider/product_provider.dart';
 import 'package:cheminova/screens/data_submit_successfull.dart';
@@ -9,7 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddProductsScreen extends StatefulWidget {
-  const AddProductsScreen({super.key});
+  final PdRdResponseModel distributor;
+  final String distributorType;
+  const AddProductsScreen({
+    super.key,
+    required this.distributor,
+    required this.distributorType,
+  });
 
   @override
   State<AddProductsScreen> createState() => _AddProductsScreenState();
@@ -64,9 +71,9 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
               padding: const EdgeInsets.only(right: 20),
             ),
           ],
-          title: const Text(
-            'Add Products',
-            style: TextStyle(
+          title: Text(
+            widget.distributor.name,
+            style: const TextStyle(
               fontSize: 20,
               color: Colors.black,
               fontWeight: FontWeight.w400,
@@ -215,7 +222,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                               provider
                                   .submitSelectedProducts(
                                       "PrincipalDistributor",
-                                      "66a0e19c981736b70ed4e34e")
+                                      widget.distributor.id)
                                   .then((value) {
                                 if (value) {
                                   Navigator.push(
@@ -268,17 +275,27 @@ class _ProductBlockState extends State<ProductBlock> {
     setState(() {
       if (saleController.text.isNotEmpty &&
           inventoryController.text.isNotEmpty) {
-        int sale = int.parse(saleController.text);
-        int inventory = int.parse(inventoryController.text);
-        if (inventory > sale) {
-          errorMessage = 'Inventory should be less than or equal to sales';
+        // Check if the input can be parsed as an integer
+        if (int.tryParse(saleController.text) == null ||
+            int.tryParse(inventoryController.text) == null) {
+          errorMessage = 'Please enter valid integer value';
         } else {
-          errorMessage = null;
+          // Parse the input as integers
+          int sale = int.parse(saleController.text);
+          int inventory = int.parse(inventoryController.text);
+
+          // Validate if inventory is less than or equal to sales
+          if (inventory > sale) {
+            errorMessage = 'Inventory should be less than or equal to sales';
+          } else {
+            errorMessage = null;
+          }
         }
       } else {
-        errorMessage = null;
+        errorMessage = 'Please fill in both fields';
       }
     });
+
     return errorMessage == null;
   }
 

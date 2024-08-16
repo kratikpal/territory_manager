@@ -32,7 +32,7 @@ class ProductProvider extends ChangeNotifier {
       setLoading(false);
       if (response.statusCode == 200) {
         productResponse = ProductResponse.fromJson(response.data);
-        productList = productResponse!.product;
+        productList = productResponse!.products;
         notifyListeners();
       }
     } catch (e) {

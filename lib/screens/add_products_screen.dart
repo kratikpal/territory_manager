@@ -30,6 +30,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
     provider = Provider.of<ProductProvider>(context, listen: false);
     await provider.getProducts();
     setState(() {
+      provider.selectedProducts.clear();
       filteredProducts = provider.productList;
     });
   }
@@ -212,7 +213,9 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                             backgroundColor: const Color(0xff004791),
                             onPressed: () {
                               provider
-                                  .submitSelectedProducts("PrincipalDistributor", "66a0e19c981736b70ed4e34e")
+                                  .submitSelectedProducts(
+                                      "PrincipalDistributor",
+                                      "66a0e19c981736b70ed4e34e")
                                   .then((value) {
                                 if (value) {
                                   Navigator.push(

@@ -43,12 +43,14 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
               padding: const EdgeInsets.only(right: 20),
             ),
           ],
-          title: const Text('Update Inventory Data',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Anek')),
+          title: const Text(
+            'Update Inventory Data',
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Anek'),
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),

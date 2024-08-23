@@ -50,6 +50,7 @@ dependencies:
   flutter_local_notifications: ^17.2.1+2
   firebase_crashlytics: ^4.0.4
   firebase_analytics: ^11.2.1
+  searchfield: ^1.0.9
 
 dev_dependencies:
   flutter_test:

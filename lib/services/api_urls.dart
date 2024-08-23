@@ -12,7 +12,9 @@ class ApiUrls {
   static const String notificationUrl = '$baseUrl/get-notification-tm';
   static const String fcmUrl = '${baseUrl}kyc/save-fcm-tm';
   static const String getProducts = '${baseUrl}product/getAll/user/';
-  static const String getPdRdUrl =
-      'inventory/distributors-TM/RetailDistributor';
+  static const String getPd = 'inventory/distributors-TM/RetailDistributor';
+  static const String getRd = 'inventory/distributors-TM/PrincipalDistributor';
   static const String submitProducts = 'inventory/add-TM';
+  static const String getSalesCoordinators = 'salescoordinator/getAll-TM';
+  static const String assignTask = 'task/assign-task';
 }

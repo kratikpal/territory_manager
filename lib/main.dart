@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cheminova/provider/collect_kyc_provider.dart';
 import 'package:cheminova/provider/pd_rd_provider.dart';
 import 'package:cheminova/provider/product_provider.dart';
+import 'package:cheminova/provider/task_provider.dart';
 import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -100,6 +101,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => PdRdProvider()),
+        ChangeNotifierProvider(create: (_) => TaskProvider()),
       ],
       child: const MyApp(),
     ),
@@ -117,12 +119,16 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // scaffoldMessengerKey: SnackBarService().scaffoldMessengerKey,
-        title: 'cheminova',
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true),
-        home: const SplashScreen());
+      debugShowCheckedModeBanner: false,
+      // scaffoldMessengerKey: SnackBarService().scaffoldMessengerKey,
+      title: 'cheminova',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xff004791),
+        ),
+        useMaterial3: true,
+      ),
+      home: const SplashScreen(),
+    );
   }
 }

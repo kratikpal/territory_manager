@@ -13,6 +13,7 @@ class CommonTextFormField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
   final bool obscureText;
+  final void Function(String)? onChanged;
 
   const CommonTextFormField({
     super.key,
@@ -26,6 +27,7 @@ class CommonTextFormField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.maxLength,
+    this.onChanged,
     this.obscureText = false,
   });
 
@@ -45,6 +47,7 @@ class CommonTextFormField extends StatelessWidget {
           readOnly: readOnly ?? false,
           maxLines: maxLines,
           maxLength: maxLength,
+          onChanged: onChanged,
           onTapOutside: (event) => FocusScope.of(context).unfocus(),
           validator: validator,
           keyboardType: keyboardType,

@@ -1,4 +1,3 @@
-import 'package:cheminova/screens/assign_tasks_screen.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
@@ -79,10 +78,18 @@ class _SelectSalesCoordinatorScreenState
                     child: ListView.builder(
                       itemCount: salesCoordinators.length,
                       itemBuilder: (context, index) {
-                        return _customCard(
-                          name: salesCoordinators[index].name,
-                          id: salesCoordinators[index].id,
-                          tasks: salesCoordinators[index].tasks,
+                        return GestureDetector(
+                          onTap: () {
+                            // taskProvider.setSelectedSalesCoordinator(
+                            //   salesCoordinators[index],
+                            // );
+                            // Navigator.pop(context);
+                          },
+                          child: _customCard(
+                            name: salesCoordinators[index].name,
+                            id: salesCoordinators[index].id,
+                            tasks: salesCoordinators[index].tasks,
+                          ),
                         );
                       },
                     ),
@@ -98,55 +105,43 @@ class _SelectSalesCoordinatorScreenState
 
   Widget _customCard(
       {required String name, required String id, required int tasks}) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return const AssignTasksScreen();
-            },
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12.0),
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white),
+        color: const Color(0xffB4D1E5).withOpacity(0.6),
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name,
+            style: const TextStyle(
+              fontFamily: 'Anek',
+              fontSize: 16,
+            ),
           ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(12.0),
-        margin: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white),
-          color: const Color(0xffB4D1E5).withOpacity(0.6),
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(
-                fontFamily: 'Anek',
-                fontSize: 16,
-              ),
+          const SizedBox(height: 5),
+          Text(
+            "ID: $id",
+            style: const TextStyle(
+              fontFamily: 'Anek',
+              fontSize: 16,
             ),
-            const SizedBox(height: 5),
-            Text(
-              "ID: $id",
-              style: const TextStyle(
-                fontFamily: 'Anek',
-                fontSize: 16,
-              ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            "Tasks: $tasks",
+            style: const TextStyle(
+              fontFamily: 'Anek',
+              fontSize: 16,
             ),
-            const SizedBox(height: 5),
-            Text(
-              "Tasks: $tasks",
-              style: const TextStyle(
-                fontFamily: 'Anek',
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

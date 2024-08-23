@@ -1,9 +1,13 @@
+import 'package:cheminova/provider/task_provider.dart';
+import 'package:cheminova/screens/confirm_task_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:cheminova/widgets/common_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:searchfield/searchfield.dart';
 
 class AssignTasksScreen extends StatefulWidget {
   const AssignTasksScreen({super.key});
@@ -13,11 +17,45 @@ class AssignTasksScreen extends StatefulWidget {
 }
 
 class _AssignTasksScreenState extends State<AssignTasksScreen> {
-  final List<bool> _isChecked = List.generate(8, (_) => false);
+  bool _isSalesCoordinatorValid = true;
+  bool _isTaskValid = true;
+  bool _isPriorityValid = true;
+  bool _isNotesValid = true;
 
-  String _dateSelected = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  void _validateAndSubmit() {
+    final taskProvider = context.read<TaskProvider>();
+    setState(() {
+      // Validate Sales Coordinator
+      _isSalesCoordinatorValid = taskProvider.selectedSalesCoordinator != null;
+
+      // Validate Task
+      _isTaskValid = taskProvider.selectedTask != null &&
+          taskProvider.selectedTask!.isNotEmpty;
+
+      // Validate Priority
+      _isPriorityValid = taskProvider.selectedPriority != null &&
+          taskProvider.selectedPriority!.isNotEmpty;
+
+      // Validate Notes
+      if (taskProvider.selectedTask == 'Collect KYC' &&
+          taskProvider.noteController.text.isEmpty) {
+        _isNotesValid = false;
+      }
+    });
+
+    // If all fields are valid, proceed to the next screen
+    if (_isSalesCoordinatorValid && _isTaskValid && _isPriorityValid) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ConfirmTaskScreen(),
+        ),
+      );
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
+    final provider = context.read<TaskProvider>();
     final dateSelected = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -25,14 +63,28 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
       lastDate: DateTime(2025),
     );
     if (dateSelected != null) {
-      setState(() {
-        _dateSelected = DateFormat('dd/MM/yyyy').format(dateSelected);
-      });
+      provider.setDate(DateFormat('dd/MM/yyyy').format(dateSelected));
     }
+  }
+
+  void _updateTaskProvider() {
+    final provider = context.read<TaskProvider>();
+    provider.clear();
+    provider.getSalesCoordinators();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateTaskProvider();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final taskProvider = context.watch<TaskProvider>();
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CommonAppBar(
@@ -56,250 +108,338 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
       ),
       drawer: const CommonDrawer(),
       body: CommonBackground(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Container(
-                padding:
-                    const EdgeInsets.all(20.0).copyWith(top: 15, bottom: 30),
-                margin: const EdgeInsets.symmetric(horizontal: 30.0)
-                    .copyWith(bottom: 50),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white),
-                  color: const Color(0xffB4D1E5).withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(26.0),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Assign Tasks',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Anek',
-                      ),
+        child: Stack(
+          children: [
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Container(
+                    padding: const EdgeInsets.all(20.0)
+                        .copyWith(top: 15, bottom: 30),
+                    margin: const EdgeInsets.symmetric(horizontal: 30.0)
+                        .copyWith(bottom: 50),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      color: const Color(0xffB4D1E5).withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(26.0),
                     ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12.0),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        color: const Color(0xffB4D1E5).withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Sales Coordinator: Name",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Anek',
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Assign Tasks',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Anek',
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SearchField(
+                          suggestionsDecoration: SuggestionDecoration(
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(8.0),
+                              bottomRight: Radius.circular(8),
+                            ),
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.5),
                             ),
                           ),
-                          Text(
-                            "ID: 121",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Anek',
-                            ),
+                          suggestionItemDecoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            shape: BoxShape.rectangle,
+                            border: Border.all(
+                                color: Colors.transparent,
+                                style: BorderStyle.solid,
+                                width: 1.0),
                           ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12.0),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        color: const Color(0xffB4D1E5).withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Tasks List:",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Anek',
+                          searchInputDecoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey.withOpacity(0.2),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Colors.white,
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                          ),
-                          SizedBox(
-                            height: 35,
-                            child: CheckboxListTile(
-                              value: _isChecked[0],
-                              onChanged: (value) {
-                                setState(() {
-                                  _isChecked[0] = value!;
-                                });
-                              },
-                              title: const Text(
-                                "Visit Retailers",
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(16.0),
+                              ),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2.0,
                               ),
                             ),
+                            errorText: !_isSalesCoordinatorValid
+                                ? 'Please select a Sales Coordinator'
+                                : null,
                           ),
-                          SizedBox(
-                            height: 45,
-                            child: CheckboxListTile(
-                              value: _isChecked[1],
-                              onChanged: (value) {
-                                setState(() {
-                                  _isChecked[1] = value!;
-                                });
-                              },
-                              title: const Text(
-                                "Update Sales Data",
-                              ),
-                            ),
+                          hint: 'Select Sales Coordinator',
+                          onSuggestionTap: (selectedItem) {
+                            if (selectedItem.item != null) {
+                              taskProvider.setSelectedSalesCoordinator(
+                                  selectedItem.item!);
+                              FocusScope.of(context).unfocus();
+                            }
+                          },
+                          onTapOutside: (event) =>
+                              FocusScope.of(context).unfocus(),
+                          marginColor: Colors.grey.shade300,
+                          suggestions: taskProvider.salesCoordinators
+                              .map(
+                                (e) => SearchFieldListItem(
+                                  e.name!,
+                                  item: e,
+                                  child: Text(e.name!),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12.0),
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            color: const Color(0xffB4D1E5).withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(16.0),
                           ),
-                          SizedBox(
-                            height: 45,
-                            child: CheckboxListTile(
-                              value: _isChecked[2],
-                              onChanged: (value) {
-                                setState(() {
-                                  _isChecked[2] = value!;
-                                });
-                              },
-                              title: const Text(
-                                "Update Liqudation Data",
-                              ),
-                            ),
-                          ),
-                          CheckboxListTile(
-                            value: _isChecked[3],
-                            onChanged: (value) {
-                              setState(() {
-                                _isChecked[3] = value!;
-                              });
-                            },
-                            title: const Text(
-                              "Collect KYC",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12.0),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        color: const Color(0xffB4D1E5).withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Priority:",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Anek',
-                            ),
-                          ),
-                          Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Checkbox(
-                                value: _isChecked[4],
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isChecked[4] = value!;
-                                  });
-                                },
-                              ),
                               const Text(
-                                "Low",
+                                "Tasks List:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Anek',
+                                ),
                               ),
-                              Checkbox(
-                                value: _isChecked[5],
+                              SizedBox(
+                                height: 35,
+                                child: RadioListTile<String>(
+                                  contentPadding: EdgeInsets.zero,
+                                  value: 'Visit Retailers',
+                                  groupValue: taskProvider.selectedTask,
+                                  onChanged: (value) {
+                                    taskProvider.setSelectedTask(value);
+                                  },
+                                  title: const Text(
+                                    "Visit Retailers",
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 45,
+                                child: RadioListTile<String>(
+                                  contentPadding: EdgeInsets.zero,
+                                  value: 'Update Sales Data',
+                                  groupValue: taskProvider.selectedTask,
+                                  onChanged: (value) {
+                                    taskProvider.setSelectedTask(value);
+                                  },
+                                  title: const Text(
+                                    "Update Sales Data",
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 45,
+                                child: RadioListTile<String>(
+                                  contentPadding: EdgeInsets.zero,
+                                  value: 'Update Liqudation Data',
+                                  groupValue: taskProvider.selectedTask,
+                                  onChanged: (value) {
+                                    taskProvider.setSelectedTask(value);
+                                  },
+                                  title: const Text(
+                                    "Update Liqudation Data",
+                                  ),
+                                ),
+                              ),
+                              RadioListTile<String>(
+                                contentPadding: EdgeInsets.zero,
+                                value: 'Collect KYC',
+                                groupValue: taskProvider.selectedTask,
                                 onChanged: (value) {
-                                  setState(() {
-                                    _isChecked[5] = value!;
-                                  });
+                                  taskProvider.setSelectedTask(value);
                                 },
+                                title: const Text(
+                                  "Collect KYC",
+                                ),
                               ),
+                              if (!_isTaskValid &&
+                                  (taskProvider.selectedTask?.isEmpty ?? true))
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Text(
+                                    'Please select a task',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (taskProvider.selectedTask == 'Collect KYC') ...{
+                          Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: TextFormField(
+                              controller: taskProvider.noteController,
+                              expands: true,
+                              maxLines: null,
+                              minLines: null,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 14.0,
+                                  horizontal: 16.0,
+                                ),
+                                border: InputBorder.none,
+                                labelText: 'Note',
+                                hintText: 'Enter your note',
+                                errorText: !_isNotesValid
+                                    ? 'Please enter a note'
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          )
+                        },
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12.0),
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            color: const Color(0xffB4D1E5).withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               const Text(
-                                "Medium",
+                                "Priority:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Anek',
+                                ),
                               ),
-                              Checkbox(
-                                value: _isChecked[6],
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isChecked[6] = value!;
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  Radio<String>(
+                                    value: "Low",
+                                    groupValue: taskProvider.selectedPriority,
+                                    onChanged: (value) {
+                                      taskProvider.setSelectedPriority(value!);
+                                    },
+                                  ),
+                                  const Text("Low"),
+                                  Radio<String>(
+                                    value: "Medium",
+                                    groupValue: taskProvider.selectedPriority,
+                                    onChanged: (value) {
+                                      taskProvider.setSelectedPriority(value!);
+                                    },
+                                  ),
+                                  const Text("Medium"),
+                                  Radio<String>(
+                                    value: "High",
+                                    groupValue: taskProvider.selectedPriority,
+                                    onChanged: (value) {
+                                      taskProvider.setSelectedPriority(value!);
+                                    },
+                                  ),
+                                  const Text("High"),
+                                ],
                               ),
+                              if (!_isPriorityValid &&
+                                  (taskProvider.selectedPriority?.isEmpty ??
+                                      true))
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Text(
+                                    'Please select a priority',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12.0),
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            color: const Color(0xffB4D1E5).withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               const Text(
-                                "High",
+                                "Due Date:",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Anek',
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    taskProvider.selectedDate,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      _selectDate(context);
+                                    },
+                                    icon: const Icon(Icons.calendar_month),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        CommonElevatedButton(
+                          backgroundColor: const Color(0xff004791),
+                          borderRadius: 30,
+                          width: double.infinity,
+                          height: kToolbarHeight - 10,
+                          text: 'CONFIRM',
+                          onPressed: _validateAndSubmit,
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12.0),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        color: const Color(0xffB4D1E5).withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Due Date:",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Anek',
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                _dateSelected,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  _selectDate(context);
-                                },
-                                icon: const Icon(Icons.calendar_month),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    CommonElevatedButton(
-                      backgroundColor: const Color(0xff004791),
-                      borderRadius: 30,
-                      width: double.infinity,
-                      height: kToolbarHeight - 10,
-                      text: 'CONFIRM',
-                      onPressed: () {},
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+            if (taskProvider.isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.1),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
         ),
       ),
     );

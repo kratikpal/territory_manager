@@ -23,10 +23,10 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
   void initState() {
     super.initState();
     // Fetch the PdRd data when the screen is initialized
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<PdRdProvider>(context, listen: false);
-      provider.getPdRd();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final provider = Provider.of<PdRdProvider>(context, listen: false);
+    //   provider.getPdRd();
+    // });
   }
 
   @override
@@ -65,11 +65,14 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             text: 'SUBMIT',
             backgroundColor: const Color(0xff004791),
             onPressed: () {
-              if(selectedDistributor == null || selectedDistributorType == null){
+              if (selectedDistributor == null ||
+                  selectedDistributorType == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please select distributor type and distributor')),
+                  const SnackBar(
+                      content: Text(
+                          'Please select distributor type and distributor')),
                 );
-              }else{
+              } else {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -85,22 +88,6 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
         ),
         body: Consumer<PdRdProvider>(
           builder: (context, provider, child) {
-            if (provider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (provider.pdRdList.isEmpty) {
-              return const Center(child: Text('No distributors available.'));
-            }
-
-            List<PdRdResponseModel> principalDistributors = provider.pdRdList
-                .where((item) => item.userType == 'SalesCoOrdinator')
-                .toList();
-
-            List<PdRdResponseModel> retailerDistributors = provider.pdRdList
-                .where((item) => item.userType != 'SalesCoOrdinator')
-                .toList();
-
             return Stack(
               children: [
                 Column(
@@ -127,6 +114,9 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                         onChanged: (value) {
                           setState(() {
                             selectedDistributorType = value;
+                            selectedDistributorType == 'Principal Distributor'
+                                ? provider.getPd()
+                                : provider.getRd();
                             selectedDistributor =
                                 null; // Reset distributor selection when type changes
                           });
@@ -148,12 +138,12 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                           value: selectedDistributor,
                           items: (selectedDistributorType ==
                                       'Principal Distributor'
-                                  ? principalDistributors
-                                  : retailerDistributors)
+                                  ? provider.pdList
+                                  : provider.rdList)
                               .map((PdRdResponseModel distributor) {
                             return DropdownMenuItem<PdRdResponseModel>(
                               value: distributor,
-                              child: Text(distributor.name),
+                              child: Text(distributor.name!),
                             );
                           }).toList(),
                           onChanged: (value) {
@@ -170,6 +160,13 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                       ),
                   ],
                 ),
+                if (provider.isLoading)
+                  Container(
+                    color: Colors.black.withOpacity(0.1),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
               ],
             );
           },

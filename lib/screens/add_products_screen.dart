@@ -72,7 +72,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
             ),
           ],
           title: Text(
-            widget.distributor.name,
+            widget.distributor.name!,
             style: const TextStyle(
               fontSize: 20,
               color: Colors.black,
@@ -222,7 +222,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                               provider
                                   .submitSelectedProducts(
                                       "PrincipalDistributor",
-                                      widget.distributor.id)
+                                      widget.distributor.id!)
                                   .then((value) {
                                 if (value) {
                                   Navigator.push(
@@ -275,27 +275,25 @@ class _ProductBlockState extends State<ProductBlock> {
     setState(() {
       if (saleController.text.isNotEmpty &&
           inventoryController.text.isNotEmpty) {
-        // Check if the input can be parsed as an integer
-        if (int.tryParse(saleController.text) == null ||
-            int.tryParse(inventoryController.text) == null) {
-          errorMessage = 'Please enter valid integer value';
-        } else {
-          // Parse the input as integers
+        // Check if both inputs are valid integers
+        try {
           int sale = int.parse(saleController.text);
           int inventory = int.parse(inventoryController.text);
 
-          // Validate if inventory is less than or equal to sales
+          // Validation: inventory should be less than or equal to sales
           if (inventory > sale) {
             errorMessage = 'Inventory should be less than or equal to sales';
           } else {
             errorMessage = null;
           }
+        } catch (e) {
+          // Handle the case where input is not a valid integer
+          errorMessage = 'Please enter valid integer values for both fields';
         }
       } else {
-        errorMessage = 'Please fill in both fields';
+        errorMessage = null;
       }
     });
-
     return errorMessage == null;
   }
 

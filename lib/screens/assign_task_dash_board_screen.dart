@@ -1,4 +1,5 @@
-import 'package:cheminova/screens/select_sales_coordinator_screen.dart';
+import 'package:cheminova/screens/assign_tasks_screen.dart';
+import 'package:cheminova/screens/task_management_screen.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
@@ -55,39 +56,40 @@ class _AssignTaskDashBoardScreenState extends State<AssignTaskDashBoardScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Assign Tasks',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Anek',
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width / 4.2,
-                        child:
-                            _customCard(title: "Total Tasks", subtitle: "100"),
-                      ),
-                      SizedBox(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width / 4.2,
-                        child: _customCard(
-                            title: "Tasks Pending", subtitle: "100"),
-                      ),
-                      SizedBox(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width / 4.2,
-                        child: _customCard(
-                            title: "Reports Submitted", subtitle: "100"),
-                      ),
-                    ],
-                  ),
+                  // const Text(
+                  //   'Assign Tasks',
+                  //   style: TextStyle(
+                  //     fontSize: 24,
+                  //     color: Colors.white,
+                  //     fontWeight: FontWeight.bold,
+                  //     fontFamily: 'Anek',
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 10),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //   children: [
+                  //     SizedBox(
+                  //       height: 200,
+                  //       width: MediaQuery.of(context).size.width / 4.2,
+                  //       child:
+                  //           _customCard(title: "Total Tasks", subtitle: "100"),
+                  //     ),
+                  //     SizedBox(
+                  //       height: 200,
+                  //       width: MediaQuery.of(context).size.width / 4.2,
+                  //       child: _customCard(
+                  //           title: "Tasks Pending", subtitle: "100"),
+                  //     ),
+                  //     SizedBox(
+                  //       height: 200,
+                  //       width: MediaQuery.of(context).size.width / 4.2,
+                  //       child: _customCard(
+                  //           title: "Reports Submitted", subtitle: "100"),
+                  //     ),
+                  //   ],
+                  // ),
+                  const SizedBox(height: 20),
                   CommonElevatedButton(
                     backgroundColor: const Color(0xff004791),
                     borderRadius: 30,
@@ -98,8 +100,7 @@ class _AssignTaskDashBoardScreenState extends State<AssignTaskDashBoardScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const SelectSalesCoordinatorScreen(),
+                          builder: (context) => const AssignTasksScreen(),
                         ),
                       );
                     },
@@ -111,7 +112,12 @@ class _AssignTaskDashBoardScreenState extends State<AssignTaskDashBoardScreen> {
                     width: double.infinity,
                     height: kToolbarHeight - 10,
                     text: 'VIEW TASK STATUS',
-                    onPressed: () {},
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TaskManagementScreen(),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 15),
                   CommonElevatedButton(

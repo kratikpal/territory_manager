@@ -8,8 +8,10 @@ class PdRdProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  List<PdRdResponseModel> _pdRdList = [];
-  List<PdRdResponseModel> get pdRdList => _pdRdList;
+  List<PdRdResponseModel> _pdList = [];
+  List<PdRdResponseModel> get pdList => _pdList;
+  List<PdRdResponseModel> _rdList = [];
+  List<PdRdResponseModel> get rdList => _rdList;
 
   final _apiClient = ApiClient();
 
@@ -18,16 +20,42 @@ class PdRdProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getPdRd() async {
+  void clearLists() {
+    _pdList.clear();
+    _rdList.clear();
+    notifyListeners();
+  }
+
+  Future<void> getPd() async {
     setLoading(true);
+    clearLists(); // Clear the list before fetching new data
     try {
-      Response response = await _apiClient.get(ApiUrls.getPdRdUrl);
+      Response response = await _apiClient.get(ApiUrls.getPd);
       if (response.statusCode == 200) {
-        // Assuming the response data is a list of PdRdResponseModel objects
         List<PdRdResponseModel> data = (response.data as List)
             .map((json) => PdRdResponseModel.fromJson(json))
             .toList();
-        _pdRdList = data;
+        _pdList = data;
+      } else {
+        print("Failed to load data: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> getRd() async {
+    setLoading(true);
+    clearLists(); // Clear the list before fetching new data
+    try {
+      Response response = await _apiClient.get(ApiUrls.getRd);
+      if (response.statusCode == 200) {
+        List<PdRdResponseModel> data = (response.data as List)
+            .map((json) => PdRdResponseModel.fromJson(json))
+            .toList();
+        _rdList = data;
       } else {
         print("Failed to load data: ${response.statusCode}");
       }

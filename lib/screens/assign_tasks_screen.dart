@@ -1,3 +1,4 @@
+import 'package:cheminova/models/pd_rd_response_model.dart';
 import 'package:cheminova/provider/task_provider.dart';
 import 'package:cheminova/screens/confirm_task_screen.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,8 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
   bool _isTaskValid = true;
   bool _isPriorityValid = true;
   bool _isNotesValid = true;
+  bool _isDistributorValid = true;
+  String? selectedDistributorType;
 
   void _validateAndSubmit() {
     final taskProvider = context.read<TaskProvider>();
@@ -37,18 +40,37 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
           taskProvider.selectedPriority!.isNotEmpty;
 
       // Validate Notes
-      if (taskProvider.selectedTask == 'Collect KYC' &&
+      if ((taskProvider.selectedTask == 'Collect KYC' ||
+              taskProvider.selectedTask == 'Visit RD/PD') &&
           taskProvider.noteController.text.isEmpty) {
         _isNotesValid = false;
+      } else {
+        _isNotesValid = true;
+      }
+
+      // Validate Distributor
+      if ((taskProvider.selectedTask == 'Update Inventory Data' ||
+              taskProvider.selectedTask == 'Visit RD/PD') &&
+          (taskProvider.selectedDistributor == null ||
+              selectedDistributorType == null)) {
+        _isDistributorValid = false;
+      } else {
+        _isDistributorValid = true;
       }
     });
 
     // If all fields are valid, proceed to the next screen
-    if (_isSalesCoordinatorValid && _isTaskValid && _isPriorityValid) {
+    if (_isSalesCoordinatorValid &&
+        _isTaskValid &&
+        _isPriorityValid &&
+        _isNotesValid &&
+        _isDistributorValid) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ConfirmTaskScreen(),
+          builder: (context) => ConfirmTaskScreen(
+            selectedDistributorType: selectedDistributorType,
+          ),
         ),
       );
     }
@@ -225,13 +247,13 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                                 height: 35,
                                 child: RadioListTile<String>(
                                   contentPadding: EdgeInsets.zero,
-                                  value: 'Visit Retailers',
+                                  value: 'Visit RD/PD',
                                   groupValue: taskProvider.selectedTask,
                                   onChanged: (value) {
                                     taskProvider.setSelectedTask(value);
                                   },
                                   title: const Text(
-                                    "Visit Retailers",
+                                    "Visit RD/PD",
                                   ),
                                 ),
                               ),
@@ -253,13 +275,13 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                                 height: 45,
                                 child: RadioListTile<String>(
                                   contentPadding: EdgeInsets.zero,
-                                  value: 'Update Liqudation Data',
+                                  value: 'Update Inventory Data',
                                   groupValue: taskProvider.selectedTask,
                                   onChanged: (value) {
                                     taskProvider.setSelectedTask(value);
                                   },
                                   title: const Text(
-                                    "Update Liqudation Data",
+                                    "Update Inventory Data",
                                   ),
                                 ),
                               ),
@@ -290,7 +312,8 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                             ],
                           ),
                         ),
-                        if (taskProvider.selectedTask == 'Collect KYC') ...{
+                        if (taskProvider.selectedTask == 'Collect KYC' ||
+                            taskProvider.selectedTask == 'Visit RD/PD') ...{
                           Container(
                             height: 150,
                             decoration: BoxDecoration(
@@ -319,6 +342,88 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                           const SizedBox(
                             height: 20,
                           )
+                        },
+                        if (taskProvider.selectedTask ==
+                                'Update Inventory Data' ||
+                            taskProvider.selectedTask == 'Visit RD/PD') ...{
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0,
+                              vertical: 5,
+                            ),
+                            child: DropdownButtonFormField<String>(
+                              decoration: const InputDecoration(
+                                labelText: 'Select Distributor Type',
+                                fillColor: Colors.white,
+                                filled: true,
+                                border: OutlineInputBorder(),
+                              ),
+                              value: selectedDistributorType,
+                              items: [
+                                'PrincipalDistributor',
+                                'RetailDistributor'
+                              ].map((String type) {
+                                return DropdownMenuItem<String>(
+                                  value: type,
+                                  child: Text(type),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedDistributorType = value;
+                                  selectedDistributorType ==
+                                          'PrincipalDistributor'
+                                      ? taskProvider.getPd()
+                                      : taskProvider.getRd();
+                                  taskProvider.setSelectedDistributor(null);
+                                });
+                              },
+                            ),
+                          ),
+                          // Dropdown for selecting distributor name based on type
+                          if (selectedDistributorType != null)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0, vertical: 25),
+                              child: DropdownButtonFormField<PdRdResponseModel>(
+                                decoration: const InputDecoration(
+                                  labelText: 'Select Distributor Name',
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  border: OutlineInputBorder(),
+                                ),
+                                value: taskProvider.selectedDistributor,
+                                items: (selectedDistributorType ==
+                                            'PrincipalDistributor'
+                                        ? taskProvider.pdList
+                                        : taskProvider.rdList)
+                                    .map((PdRdResponseModel distributor) {
+                                  return DropdownMenuItem<PdRdResponseModel>(
+                                    value: distributor,
+                                    child: Text(distributor.name!),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  taskProvider.setSelectedDistributor(value);
+                                },
+                                isExpanded: true,
+                                isDense: true,
+                                iconSize: 24,
+                                hint: Text(
+                                    'Please select a ${selectedDistributorType ?? "Distributor Type"} first'),
+                              ),
+                            ),
+                          if (!_isDistributorValid)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Text(
+                                'Please select a distributor',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                         },
                         Container(
                           width: double.infinity,

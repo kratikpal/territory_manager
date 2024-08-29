@@ -13,6 +13,9 @@ class TaskProvider extends ChangeNotifier {
   String? _selectedPriority;
   String _selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
   List<PdRdResponseModel> _salesCoordinators = [];
+  List<PdRdResponseModel> _pdList = [];
+  List<PdRdResponseModel> _rdList = [];
+  PdRdResponseModel? _selectedDistributor;
   final TextEditingController _noteController = TextEditingController();
   final _apiClient = ApiClient();
 
@@ -23,6 +26,9 @@ class TaskProvider extends ChangeNotifier {
   String get selectedDate => _selectedDate;
   List<PdRdResponseModel> get salesCoordinators => _salesCoordinators;
   TextEditingController get noteController => _noteController;
+  List<PdRdResponseModel> get pdList => _pdList;
+  List<PdRdResponseModel> get rdList => _rdList;
+  PdRdResponseModel? get selectedDistributor => _selectedDistributor;
 
   void setLoading(bool loading) {
     _isLoading = loading;
@@ -49,7 +55,7 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clear(){
+  void clear() {
     _selectedSalesCoordinator = null;
     _selectedTask = null;
     _selectedPriority = null;
@@ -79,19 +85,39 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> assignTask(BuildContext context) async {
+  Future<void> assignTask({
+    required BuildContext context,
+    String? selectedDistributorType,
+  }) async {
     setLoading(true);
+    print("addedFff:$selectedDistributorType");
+
     try {
+      final data = {
+        'taskAssignedTo': _selectedSalesCoordinator!.id,
+        'task': _selectedTask,
+        'taskPriority': _selectedPriority,
+        'taskDueDate': _selectedDate,
+        if (_selectedTask == 'Collect KYC' || _selectedTask == 'Visit RD/PD')
+          'note': _noteController.text,
+      };
+
+      if (selectedDistributorType != null &&
+          selectedDistributorType.isNotEmpty) {
+        data.addAll({
+          'addedFor': selectedDistributorType,
+          'addedForId': _selectedDistributor!.id,
+          'tradename': selectedDistributorType == 'PrincipalDistributor'
+              ? _selectedDistributor!.shippingAddress!.tradeName
+              : _selectedDistributor!.tradeNameRd,
+        });
+      }
+
       Response response = await _apiClient.post(
         ApiUrls.assignTask,
-        data: {
-          'taskAssignedTo': _selectedSalesCoordinator!.id,
-          'task': _selectedTask,
-          'taskPriority': _selectedPriority,
-          'taskDueDate': _selectedDate,
-          'note': _noteController.text,
-        },
+        data: data,
       );
+
       if (response.statusCode == 201) {
         Navigator.push(
           context,
@@ -101,6 +127,59 @@ class TaskProvider extends ChangeNotifier {
         );
       } else {
         print("Failed to assign task: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  void clearLists() {
+    _pdList.clear();
+    _rdList.clear();
+    notifyListeners();
+  }
+
+  void setSelectedDistributor(PdRdResponseModel? distributor) {
+    _selectedDistributor = distributor;
+    notifyListeners();
+  }
+
+  Future<void> getPd() async {
+    setLoading(true);
+    clearLists(); // Clear the list before fetching new data
+    try {
+      Response response = await _apiClient.get(ApiUrls.getPd);
+      if (response.statusCode == 200) {
+        List<PdRdResponseModel> data = (response.data as List)
+            .map((json) => PdRdResponseModel.fromJson(json))
+            .toList();
+        _pdList = data;
+        print("PDTradeName ${data[0].shippingAddress!.tradeName}");
+      } else {
+        print("Failed to load data: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> getRd() async {
+    setLoading(true);
+    clearLists(); // Clear the list before fetching new data
+    try {
+      Response response = await _apiClient.get(ApiUrls.getRd);
+      if (response.statusCode == 200) {
+        List<PdRdResponseModel> data = (response.data as List)
+            .map((json) => PdRdResponseModel.fromJson(json))
+            .toList();
+        _rdList = data;
+        print("RDTradeName ${data[0].tradeNameRd}");
+      } else {
+        print("Failed to load data: ${response.statusCode}");
       }
     } catch (e) {
       print("Error occurred: $e");

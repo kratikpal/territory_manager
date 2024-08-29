@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ConfirmTaskScreen extends StatefulWidget {
-  const ConfirmTaskScreen({super.key});
+  final String? selectedDistributorType;
+  const ConfirmTaskScreen({
+    super.key,
+    this.selectedDistributorType,
+  });
 
   @override
   State<ConfirmTaskScreen> createState() => _ConfirmTaskScreenState();
@@ -136,7 +140,8 @@ class _ConfirmTaskScreenState extends State<ConfirmTaskScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    if (taskProvider.selectedTask == 'Collect KYC')
+                    if (taskProvider.selectedTask == 'Collect KYC' ||
+                        taskProvider.selectedTask == 'Visit RD/PD')
                       _customContainer(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,6 +165,31 @@ class _ConfirmTaskScreenState extends State<ConfirmTaskScreen> {
                         ),
                       ),
                     const SizedBox(height: 20),
+                    if (taskProvider.selectedTask == 'Update Inventory Data' ||
+                        taskProvider.selectedTask == 'Visit RD/PD') ...{
+                      _customContainer(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.selectedDistributorType!,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Anek',
+                            ),
+                          ),
+                          Text(
+                            taskProvider.selectedDistributor!.name!,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Anek',
+                            ),
+                          ),
+                        ],
+                      )),
+                    },
+                    const SizedBox(height: 20),
                     CommonElevatedButton(
                       isLoading: taskProvider.isLoading,
                       backgroundColor: const Color(0xff004791),
@@ -167,7 +197,13 @@ class _ConfirmTaskScreenState extends State<ConfirmTaskScreen> {
                       width: double.infinity,
                       height: kToolbarHeight - 10,
                       text: 'CONFIRM',
-                      onPressed: () => taskProvider.assignTask(context),
+                      onPressed: () => taskProvider.assignTask(
+                        context: context,
+                        selectedDistributorType:
+                            widget.selectedDistributorType != null
+                                ? widget.selectedDistributorType!
+                                : '',
+                      ),
                     ),
                     const SizedBox(height: 20),
                     CommonElevatedButton(

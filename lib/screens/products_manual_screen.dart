@@ -1,4 +1,8 @@
+import 'package:cheminova/models/product_manual_model.dart';
+import 'package:cheminova/provider/product_manual_provider.dart';
+import 'package:cheminova/screens/view_pdf_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
@@ -9,6 +13,13 @@ class ProductsManualScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access the provider
+    final productManualProvider =
+        Provider.of<ProductManualProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      productManualProvider.getProductManualList();
+    });
+
     return CommonBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -22,12 +33,14 @@ class ProductsManualScreen extends StatelessWidget {
               padding: const EdgeInsets.only(right: 20),
             ),
           ],
-          title: const Text('Products Manual',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Anek')),
+          title: const Text(
+            'Products Manual',
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Anek'),
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -41,25 +54,39 @@ class ProductsManualScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
-                    color: const Color(0xffB4D1E5).withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(26.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _buildProductButton('Product 1'),
-                      _buildProductButton('Product 2'),
-                      _buildProductButton('Product 3'),
-                      _buildProductButton('Product 4'),
-                      _buildProductButton('Product 5'),
-                      _buildProductButton('Product 6'),
-                      _buildProductButton('Product 7'),
-                    ],
-                  ),
+                Consumer<ProductManualProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (provider.productManualList.isEmpty) {
+                      return const Center(
+                        child: Text('No products available.'),
+                      );
+                    }
+
+                    return Container(
+                      padding: const EdgeInsets.all(20.0)
+                          .copyWith(top: 30, bottom: 30),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        color: const Color(0xffB4D1E5).withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(26.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: provider.productManualList
+                            .map(
+                              (product) =>
+                                  _buildProductButton(context, product),
+                            )
+                            .toList(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -69,19 +96,21 @@ class ProductsManualScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductButton(String productName) {
+  Widget _buildProductButton(BuildContext context, ProductManualModel product) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: CommonElevatedButton(
         borderRadius: 30,
         width: double.infinity,
         height: kToolbarHeight - 10,
-        text: productName,
+        text: product.title,
         backgroundColor: const Color(0xff004791),
-        onPressed: () {
-          // Handle product button press
-          debugPrint('$productName pressed');
-        },
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ViewPdfScreen(productManualModel: product),
+          ),
+        ),
       ),
     );
   }

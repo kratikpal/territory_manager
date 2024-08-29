@@ -51,6 +51,7 @@ dependencies:
   firebase_crashlytics: ^4.0.4
   firebase_analytics: ^11.2.1
   searchfield: ^1.0.9
+  syncfusion_flutter_pdfviewer: ^26.2.11
 
 dev_dependencies:
   flutter_test:

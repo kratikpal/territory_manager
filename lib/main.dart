@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cheminova/provider/collect_kyc_provider.dart';
 import 'package:cheminova/provider/pd_rd_provider.dart';
+import 'package:cheminova/provider/product_manual_provider.dart';
 import 'package:cheminova/provider/product_provider.dart';
 import 'package:cheminova/provider/task_provider.dart';
 import 'package:cheminova/provider/user_provider.dart';
@@ -22,8 +23,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 AndroidNotificationChannel channel = const AndroidNotificationChannel(
-    'High Importance Channel', 'High Importance Notifications',
-    importance: Importance.high);
+  'High Importance Channel',
+  'High Importance Notifications',
+  importance: Importance.high,
+);
 
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
@@ -102,6 +105,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => PdRdProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
+        ChangeNotifierProvider(create: (_) => ProductManualProvider()),
       ],
       child: const MyApp(),
     ),

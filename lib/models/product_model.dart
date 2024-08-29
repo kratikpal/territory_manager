@@ -37,10 +37,11 @@ class Product {
   final String SKU;
   final String name;
   final Category category;
+  final Brand brand;
   final double price;
-  final GST gst;
+  final int GST;
+  final int HSNCode;
   final String description;
-  final String specialInstructions;
   final String productStatus;
   final AddedBy addedBy;
   final List<dynamic> image;
@@ -55,10 +56,11 @@ class Product {
     required this.SKU,
     required this.name,
     required this.category,
+    required this.brand,
     required this.price,
-    required this.gst,
+    required this.GST,
+    required this.HSNCode,
     required this.description,
-    required this.specialInstructions,
     required this.productStatus,
     required this.addedBy,
     required this.image,
@@ -75,10 +77,11 @@ class Product {
       SKU: json['SKU'],
       name: json['name'],
       category: Category.fromJson(json['category']),
+      brand: Brand.fromJson(json['brand']),
       price: (json['price'] as num).toDouble(),
-      gst: GST.fromJson(json['GST']),
-      description: json['description'],
-      specialInstructions: json['special_instructions'],
+      GST: json['GST'],
+      HSNCode: json['HSN_Code'],
+      description: json['description'] ?? '',
       productStatus: json['product_Status'],
       addedBy: AddedBy.fromJson(json['addedBy']),
       image: json['image'] as List<dynamic>,
@@ -96,10 +99,11 @@ class Product {
       'SKU': SKU,
       'name': name,
       'category': category.toJson(),
+      'brand': brand.toJson(),
       'price': price,
-      'GST': gst.toJson(),
+      'GST': GST,
+      'HSN_Code': HSNCode,
       'description': description,
-      'special_instructions': specialInstructions,
       'product_Status': productStatus,
       'addedBy': addedBy.toJson(),
       'image': image,
@@ -136,30 +140,26 @@ class Category {
   }
 }
 
-class GST {
+class Brand {
   final String id;
-  final String name;
-  final int tax;
+  final String brandName;
 
-  GST({
+  Brand({
     required this.id,
-    required this.name,
-    required this.tax,
+    required this.brandName,
   });
 
-  factory GST.fromJson(Map<String, dynamic> json) {
-    return GST(
+  factory Brand.fromJson(Map<String, dynamic> json) {
+    return Brand(
       id: json['_id'],
-      name: json['name'],
-      tax: json['tax'],
+      brandName: json['brandName'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'name': name,
-      'tax': tax,
+      'brandName': brandName,
     };
   }
 }

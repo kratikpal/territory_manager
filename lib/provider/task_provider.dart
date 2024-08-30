@@ -1,4 +1,5 @@
 import 'package:cheminova/models/pd_rd_response_model.dart';
+import 'package:cheminova/models/task_model.dart';
 import 'package:cheminova/screens/data_submit_successfull.dart';
 import 'package:cheminova/services/api_client.dart';
 import 'package:cheminova/services/api_urls.dart';
@@ -15,6 +16,7 @@ class TaskProvider extends ChangeNotifier {
   List<PdRdResponseModel> _salesCoordinators = [];
   List<PdRdResponseModel> _pdList = [];
   List<PdRdResponseModel> _rdList = [];
+  List<TaskModel> _taskModelList = [];
   PdRdResponseModel? _selectedDistributor;
   final TextEditingController _noteController = TextEditingController();
   final _apiClient = ApiClient();
@@ -28,6 +30,7 @@ class TaskProvider extends ChangeNotifier {
   TextEditingController get noteController => _noteController;
   List<PdRdResponseModel> get pdList => _pdList;
   List<PdRdResponseModel> get rdList => _rdList;
+  List<TaskModel> get taskModelList => _taskModelList;
   PdRdResponseModel? get selectedDistributor => _selectedDistributor;
 
   void setLoading(bool loading) {
@@ -61,6 +64,7 @@ class TaskProvider extends ChangeNotifier {
     _selectedPriority = null;
     _selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
     _noteController.clear();
+    _taskModelList.clear();
     notifyListeners();
   }
 
@@ -180,6 +184,61 @@ class TaskProvider extends ChangeNotifier {
         print("RDTradeName ${data[0].tradeNameRd}");
       } else {
         print("Failed to load data: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> getNewTasks() async {
+    setLoading(true);
+    clearLists();
+    try {
+      Response response = await _apiClient.get("${ApiUrls.getAllTasks}New");
+      if (response.statusCode == 200) {
+        List<TaskModel> data = (response.data['tasks'] as List)
+            .map((json) => TaskModel.fromJson(json))
+            .toList();
+        _taskModelList = data;
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> getPendingTasks() async {
+    setLoading(true);
+    clearLists();
+    try {
+      Response response = await _apiClient.get("${ApiUrls.getAllTasks}Pending");
+      if (response.statusCode == 200) {
+        List<TaskModel> data = (response.data['tasks'] as List)
+            .map((json) => TaskModel.fromJson(json))
+            .toList();
+        _taskModelList = data;
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> getCompletedTasks() async {
+    setLoading(true);
+    clearLists();
+    try {
+      Response response =
+          await _apiClient.get("${ApiUrls.getAllTasks}Completed");
+      if (response.statusCode == 200) {
+        List<TaskModel> data = (response.data['tasks'] as List)
+            .map((json) => TaskModel.fromJson(json))
+            .toList();
+        _taskModelList = data;
       }
     } catch (e) {
       print("Error occurred: $e");

@@ -49,8 +49,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
       }
 
       // Validate Distributor
-      if ((taskProvider.selectedTask == 'Update Inventory Data' ||
-              taskProvider.selectedTask == 'Visit RD/PD') &&
+      if ((taskProvider.selectedTask != 'Collect KYC') &&
           (taskProvider.selectedDistributor == null ||
               selectedDistributorType == null)) {
         _isDistributorValid = false;
@@ -267,7 +266,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                                     taskProvider.setSelectedTask(value);
                                   },
                                   title: const Text(
-                                    "Update Sales Data",
+                                    "Update Sales Data Data",
                                   ),
                                 ),
                               ),
@@ -345,7 +344,8 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                         },
                         if (taskProvider.selectedTask ==
                                 'Update Inventory Data' ||
-                            taskProvider.selectedTask == 'Visit RD/PD') ...{
+                            taskProvider.selectedTask == 'Visit RD/PD' ||
+                            taskProvider.selectedTask == 'Update Sales Data') ...{
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 15.0,

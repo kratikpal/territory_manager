@@ -1,5 +1,6 @@
 import 'package:cheminova/notification_service.dart';
 import 'package:cheminova/provider/user_provider.dart';
+import 'package:cheminova/screens/Visit_Dealers_screen.dart';
 import 'package:cheminova/screens/assign_task_dash_board_screen.dart';
 import 'package:cheminova/screens/calendar_screen.dart';
 import 'package:cheminova/screens/collect_kyc_screen.dart';
@@ -7,14 +8,12 @@ import 'package:cheminova/screens/mark_attendence_screen.dart';
 import 'package:cheminova/screens/notification_screen.dart';
 import 'package:cheminova/screens/products_manual_screen.dart';
 import 'package:cheminova/screens/rejected_application_screen.dart';
-import 'package:cheminova/screens/summary_screen.dart';
 import 'package:cheminova/screens/product_sales_data.dart';
 import 'package:cheminova/screens/update_inventory_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
-import 'package:cheminova/screens/daily_tasks_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -106,17 +105,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 5,
                       ),
-                      _buildCustomCard('Daily Tasks', 'Dashboard', onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const DailyTasksScreen(),
-                            ));
-                      }),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      _buildCustomCard('Assign Tasks', '', onTap: () {
+                      _buildCustomCard('Assign Tasks', 'Dashboard', onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -130,9 +119,8 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildCustomCard(
-                                'Display\nSales data', 'Quickly display Sales',
-                                onTap: () {
+                            child: _buildCustomCard('Display\nSales data',
+                                'Quickly display Sales\n', onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -163,14 +151,19 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: [
                           Expanded(
-                            child:
-                                _buildCustomCard('Summary', '\n\n', onTap: () {
-                              Navigator.push(
+                            child: _buildCustomCard(
+                              'Visit RD/PD',
+                              '\n\n',
+                              onTap: () {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SummaryScreen(),
-                                  ));
-                            }),
+                                    builder: (context) =>
+                                        const VisitDealersScreen(),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                           const SizedBox(
                             width: 12,

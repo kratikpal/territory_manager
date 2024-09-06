@@ -94,7 +94,6 @@ class TaskProvider extends ChangeNotifier {
     String? selectedDistributorType,
   }) async {
     setLoading(true);
-    print("addedFff:$selectedDistributorType");
 
     try {
       final data = {

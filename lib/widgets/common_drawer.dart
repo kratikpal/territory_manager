@@ -2,6 +2,7 @@ import 'package:cheminova/provider/user_provider.dart';
 import 'package:cheminova/screens/change_password_screen.dart';
 import 'package:cheminova/screens/home_screen.dart';
 import 'package:cheminova/screens/login_screen.dart';
+import 'package:cheminova/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -72,7 +73,14 @@ class CommonDrawer extends StatelessWidget {
             leading: const Icon(Icons.account_circle),
             title: const Text('Profile'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const ProfileScreen();
+                  },
+                ),
+              );
             },
           ),
           ListTile(

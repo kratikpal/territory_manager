@@ -1,20 +1,25 @@
+import 'package:cheminova/provider/visit_pdrd_provider.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../widgets/common_app_bar.dart';
 import '../widgets/common_elevated_button.dart';
 import '../widgets/common_text_form_field.dart';
 import 'package:image_picker/image_picker.dart';
 
 class VisitDealersScreen extends StatefulWidget {
-  const VisitDealersScreen({super.key});
+  final String? tradeName;
+  final String? id;
+  const VisitDealersScreen({super.key, this.tradeName, this.id});
 
   @override
   State<VisitDealersScreen> createState() => VisitDealersScreenState();
 }
 
 class VisitDealersScreenState extends State<VisitDealersScreen> {
+  late VisitPdRdProvider _visitPdRdProvider;
   final dateController = TextEditingController(
       text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
@@ -26,13 +31,10 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
   final meetingSummaryController = TextEditingController();
   final followUpActionsController = TextEditingController();
   final nextVisitDateController = TextEditingController();
+  late TextEditingController retailerController = TextEditingController();
 
-  String selectedPurpose = 'Sales/Liquidation';
-  List<String> purposeOptions = [
-    'Sales/Liquidation',
-    'Dues collection',
-    'Others'
-  ];
+  String selectedPurpose = 'Sales';
+  List<String> purposeOptions = ['Sales', 'Dues collection', 'Others'];
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -41,33 +43,51 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
   }
 
   @override
+  void initState() {
+    _visitPdRdProvider = VisitPdRdProvider();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return CommonBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: CommonAppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Image.asset('assets/Back_attendance.png'),
-              padding: const EdgeInsets.only(right: 20),
-            ),
-          ],
-          title: const Text('Visit Retailers',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Anek')),
+    retailerController = TextEditingController(text: widget.tradeName);
+
+    return ChangeNotifierProvider(
+      create: (context) => _visitPdRdProvider,
+      child: CommonBackground(
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        drawer: const CommonDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
+          appBar: CommonAppBar(
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Image.asset('assets/Back_attendance.png'),
+                padding: const EdgeInsets.only(right: 20),
+              ),
+            ],
+            title: Column(
+              children: [
+                const Text('Visit Retailers',
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Anek')),
+                Text(widget.tradeName ?? '',
+                    style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Anek')),
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          drawer: const CommonDrawer(),
+          body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -77,7 +97,7 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
                 Container(
                   padding:
                       const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
-                  // margin: const EdgeInsets.symmetric(horizontal: 30.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.white),
                       color: const Color(0xffB4D1E5).withOpacity(0.9),
@@ -86,9 +106,10 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       CommonTextFormField(
+                          readOnly: true,
                           title: 'Select Retailer',
                           fillColor: Colors.white,
-                          controller: dealerController),
+                          controller: retailerController),
                       const SizedBox(height: 15),
                       CommonTextFormField(
                           title: 'Visit date',
@@ -155,15 +176,19 @@ class VisitDealersScreenState extends State<VisitDealersScreen> {
                         ],
                       ),
                       const SizedBox(height: 15),
-                      Align(
-                        alignment: Alignment.center,
-                        child: CommonElevatedButton(
-                          borderRadius: 30,
-                          width: double.infinity,
-                          height: kToolbarHeight - 10,
-                          text: 'SUBMIT',
-                          backgroundColor: const Color(0xff004791),
-                          onPressed: () {},
+                      Consumer<VisitPdRdProvider>(
+                        builder: (context, value, child) => Align(
+                          alignment: Alignment.center,
+                          child: CommonElevatedButton(
+                            borderRadius: 30,
+                            width: double.infinity,
+                            height: kToolbarHeight - 10,
+                            text: 'SUBMIT',
+                            backgroundColor: const Color(0xff004791),
+                            onPressed: () {
+                              value.submitVisitPdRd(context, widget.id ?? '');
+                            },
+                          ),
                         ),
                       ),
                     ],

@@ -165,8 +165,7 @@ class _ConfirmTaskScreenState extends State<ConfirmTaskScreen> {
                         ),
                       ),
                     const SizedBox(height: 20),
-                    if (taskProvider.selectedTask == 'Update Inventory Data' ||
-                        taskProvider.selectedTask == 'Visit RD/PD') ...{
+                    if (taskProvider.selectedTask != 'Collect KYC') ...{
                       _customContainer(
                           child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

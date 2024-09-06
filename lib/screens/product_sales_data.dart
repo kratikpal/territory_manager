@@ -19,7 +19,7 @@ class ProductSalesDataState extends State<ProductSalesData> {
       text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
   final timeController =
-  TextEditingController(text: DateFormat('hh:mm a').format(DateTime.now()));
+      TextEditingController(text: DateFormat('hh:mm a').format(DateTime.now()));
 
   final locationController = TextEditingController();
   final notesController = TextEditingController();
@@ -29,19 +29,19 @@ class ProductSalesDataState extends State<ProductSalesData> {
   final salesController = TextEditingController();
   final commentController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return CommonBackground(
-      child: Scaffold(backgroundColor: Colors.transparent,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: CommonAppBar(
           actions: [
             IconButton(
-              onPressed: ()
-              {
+              onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Image.asset('assets/Back_attendance.png'),    padding: const EdgeInsets.only(right: 20),
+              icon: Image.asset('assets/Back_attendance.png'),
+              padding: const EdgeInsets.only(right: 20),
             ),
           ],
           title: const Text('Product Sales Data',
@@ -49,7 +49,9 @@ class ProductSalesDataState extends State<ProductSalesData> {
                   fontSize: 20,
                   color: Colors.black,
                   fontWeight: FontWeight.w400,
-                  fontFamily: 'Anek')), backgroundColor: Colors.transparent, elevation: 0,
+                  fontFamily: 'Anek')),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
         drawer: const CommonDrawer(),
         body: Padding(
@@ -63,7 +65,7 @@ class ProductSalesDataState extends State<ProductSalesData> {
                 const SizedBox(height: 16),
                 Container(
                   padding:
-                  const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
+                      const EdgeInsets.all(20.0).copyWith(top: 30, bottom: 30),
                   // margin: const EdgeInsets.symmetric(horizontal: 30.0),
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.white),
@@ -77,42 +79,42 @@ class ProductSalesDataState extends State<ProductSalesData> {
                           fillColor: Colors.white,
                           controller: dealercontroller),
                       const SizedBox(height: 15),
-
                       CommonTextFormField(
                           title: 'Select Product: Product A',
                           fillColor: Colors.white,
                           controller: productController),
                       const SizedBox(height: 15),
-
                       CommonTextFormField(
                           title: 'Date Range: 10-06 to 20-06',
                           readOnly: true,
                           fillColor: Colors.white,
                           controller: dateController),
                       const SizedBox(height: 15),
-
                       Align(
-                        alignment: Alignment.center,
-                        child:    CommonElevatedButton(
-                          borderRadius: 30,
-                          width: double.infinity,
-                          height: kToolbarHeight - 10,
-                          text: 'VIEW DATA',
-                          backgroundColor: const Color(0xff004791),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const DataSubmitSuccessfull(),));
-                          },
-
-                          )
-
-                        ),
-                      ],
+                          alignment: Alignment.center,
+                          child: CommonElevatedButton(
+                            borderRadius: 30,
+                            width: double.infinity,
+                            height: kToolbarHeight - 10,
+                            text: 'VIEW DATA',
+                            backgroundColor: const Color(0xff004791),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const DataSubmitSuccessfull(),
+                                  ));
+                            },
+                          )),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ),),
+        ),
+      ),
     );
   }
 }

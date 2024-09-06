@@ -19,4 +19,5 @@ class ApiUrls {
   static const String assignTask = 'task/assign-task';
   static const String getProductsManual = 'productmanual/getall';
   static const String getAllTasks = 'task/alltasks/';
+  static const String updateTaskInventoryUrl = '';
 }

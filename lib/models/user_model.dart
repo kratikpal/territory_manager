@@ -3,6 +3,8 @@ class UserModel {
   String name;
   String email;
   String uniqueId;
+  String mobileNumber;
+  String designation;
   bool isVerified;
 
   UserModel({
@@ -10,6 +12,8 @@ class UserModel {
     required this.name,
     required this.email,
     required this.uniqueId,
+    required this.mobileNumber,
+    required this.designation,
     required this.isVerified,
   });
 
@@ -19,8 +23,9 @@ class UserModel {
       name: json['name'],
       email: json['email'],
       uniqueId: json['uniqueId'],
+      mobileNumber: json['mobileNumber'],
+      designation: json['designation'],
       isVerified: json['isVerified'],
     );
   }
 }
-

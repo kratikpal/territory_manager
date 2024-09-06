@@ -18,7 +18,7 @@ class TaskManagementScreen extends StatefulWidget {
 class _TaskManagementScreenState extends State<TaskManagementScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<TaskModel> _filteredTaskList = [];
-  String? _selectedChip; // State to track the selected chip
+  String? _selectedChip = 'New'; // State to track the selected chip
 
   void _filterTaskList(String query) {
     if (query.isEmpty || query == '' || query == ' ') {
@@ -165,7 +165,11 @@ class _TaskManagementScreenState extends State<TaskManagementScreen> {
                               : ListView.builder(
                                   itemCount: _filteredTaskList.length,
                                   itemBuilder: (context, index) => _taskView(
-                                    task: _filteredTaskList[index],
+                                    task: _filteredTaskList[
+                                        _selectedChip == 'Completed'
+                                            ? index
+                                            : ((_filteredTaskList.length - 1) -
+                                                index)],
                                   ),
                                 ),
                         ),

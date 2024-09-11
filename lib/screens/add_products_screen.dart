@@ -2,6 +2,7 @@ import 'package:cheminova/models/pd_rd_response_model.dart';
 import 'package:cheminova/models/product_model.dart';
 import 'package:cheminova/provider/product_provider.dart';
 import 'package:cheminova/screens/data_submit_successfull.dart';
+import 'package:cheminova/utils/string_extension.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
@@ -72,7 +73,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
             ),
           ],
           title: Text(
-            widget.distributor.name!,
+            widget.distributor.name!.capitalize(),
             style: const TextStyle(
               fontSize: 20,
               color: Colors.black,
@@ -160,7 +161,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                                                   child: ListTile(
                                                     title: Text(
                                                       filteredProducts[index]
-                                                          .name,
+                                                          .name.capitalize(),
                                                       style: TextStyle(
                                                         color: isAlreadySelected
                                                             ? Colors.grey
@@ -308,7 +309,7 @@ class _ProductBlockState extends State<ProductBlock> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Product: ${provider.selectedProducts[widget.index].name}',
+            Text('Product: ${provider.selectedProducts[widget.index].name.capitalize()}',
                 style: const TextStyle(fontSize: 16)),
             Text('SKU: ${provider.selectedProducts[widget.index].SKU}',
                 style: const TextStyle(fontSize: 15)),

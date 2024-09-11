@@ -198,7 +198,7 @@ class _TaskManagementScreenState extends State<TaskManagementScreen> {
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.white),
-        color: const Color(0xffB4D1E5).withOpacity(0.6),
+        color: const Color(0xffB4D1E5).withOpacity(0.8),
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: child,
@@ -220,21 +220,38 @@ class _TaskManagementScreenState extends State<TaskManagementScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
               Text(
                 "Task: ${task.task}",
                 style: const TextStyle(
                   fontFamily: 'Anek',
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
+              if (task.addedFor != null) ...{
+                task.addedFor == 'PrincipalDistributor'
+                    ? Text(
+                        "PD: ${task.tradename}",
+                      )
+                    : Text("RD: ${task.tradename}"),
+                const SizedBox(height: 5),
+              },
               Text(
                 'Status: ${task.taskStatus}',
                 style: const TextStyle(
                   fontFamily: 'Anek',
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
+              if (task.note != null) ...{
+                Text(
+                  'Note: ${task.note}',
+                  style: const TextStyle(
+                    fontFamily: 'Anek',
+                  ),
+                ),
+                const SizedBox(height: 5),
+              },
               Text(
                 'Deadline:$formatedDate',
                 style: const TextStyle(

@@ -112,7 +112,7 @@ class TaskProvider extends ChangeNotifier {
           'addedForId': _selectedDistributor!.id,
           'tradename': selectedDistributorType == 'PrincipalDistributor'
               ? _selectedDistributor!.shippingAddress!.tradeName
-              : _selectedDistributor!.tradeNameRd,
+              : _selectedDistributor!.kyc!.tradeName,
         });
       }
 
@@ -180,7 +180,7 @@ class TaskProvider extends ChangeNotifier {
             .map((json) => PdRdResponseModel.fromJson(json))
             .toList();
         _rdList = data;
-        print("RDTradeName ${data[0].tradeNameRd}");
+        print("RDTradeName ${data[0].kyc!.tradeName}");
       } else {
         print("Failed to load data: ${response.statusCode}");
       }

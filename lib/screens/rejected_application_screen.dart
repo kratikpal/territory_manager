@@ -94,81 +94,83 @@ class MyListView extends StatelessWidget {
         RejectedApplicationResponse item = value.rejectedApplicationList[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-          child: ExpansionTile(
-            collapsedBackgroundColor: Colors.white,
-            backgroundColor: Colors.white,
-            title: Text(
-              item.tradeName ?? '',
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text((DateFormat("dd MMMM yyyy")
-                    .format(DateTime.parse(item.createdAt ?? '')))),
-                Text(item.sId ?? ''),
-                for (var note in item.notes!) Text(note.message ?? ''),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15), // Rounded corner
+            child: ExpansionTile(
+              collapsedBackgroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              title: Text(
+                item.tradeName ?? '',
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text((DateFormat("dd MMMM yyyy")
+                      .format(DateTime.parse(item.createdAt ?? '')))),
+                  Text("ID:${item.sId ?? ''}"),
+                  for (var note in item.notes!) Text(note.message ?? ''),
+                ],
+              ),
+              children: <Widget>[
+                ListTile(
+                  title: Text('Address: ${item.address ?? ''}'),
+                ),
+                ListTile(
+                  title: Text('City: ${item.city ?? ''}'),
+                ),
+                ListTile(
+                  title: Text('State: ${item.state ?? ''}'),
+                ),
+                ListTile(
+                  title: Text('Pincode: ${item.pincode ?? ''}'),
+                ),
+                ListTile(
+                  title: Text('Mobile: ${item.mobileNumber ?? ''}'),
+                ),
+                ListTile(
+                  title: Text('Status: ${item.status ?? ''}'),
+                ),
+                ListTile(
+                  title: Text(
+                      'Principal Distributor: ${item.principalDistributer!.name ?? ''}'),
+                ),
+                ListTile(
+                  title: Text('PAN Number: ${item.panNumber ?? ''}'),
+                ),
+                Image.network(item.panImg!.url ?? '', height: 250, width: 250),
+                ListTile(
+                  title: Text('Aadhar Number: ${item.aadharNumber ?? ''}'),
+                ),
+                Image.network(item.aadharImg?.url ?? '',
+                    height: 250, width: 250),
+                ListTile(
+                  title: Text('GST Number: ${item.gstNumber ?? ''}'),
+                ),
+                Image.network(item.gstImg!.url ?? '', height: 250, width: 250),
+                const ListTile(
+                  title: Text('Pesticide License: '),
+                ),
+                if (item.pesticideLicenseImg != null)
+                  Image.network(item.pesticideLicenseImg!.url ?? '',
+                      height: 250, width: 250),
+                const ListTile(
+                  title: Text('selfieEntranceImg: '),
+                ),
+                Image.network(item.selfieEntranceImg!.url ?? '',
+                    height: 250, width: 250),
+                const ListTile(
+                  title: Text('Notes:'),
+                ),
+                if (item.notes != null)
+                  for (var note in item.notes!)
+                    ListTile(
+                      contentPadding: const EdgeInsets.only(left: 20),
+                      title: Text(note.message ?? ''),
+                    ),
               ],
             ),
-            children: <Widget>[
-              ListTile(
-                title: Text('Address: ${item.address ?? ''}'),
-              ),
-              ListTile(
-                title: Text('City: ${item.city ?? ''}'),
-              ),
-              ListTile(
-                title: Text('State: ${item.state ?? ''}'),
-              ),
-              ListTile(
-                title: Text('Pincode: ${item.pincode ?? ''}'),
-              ),
-              ListTile(
-                title: Text('Mobile: ${item.mobileNumber ?? ''}'),
-              ),
-              ListTile(
-                title: Text('Status: ${item.status ?? ''}'),
-              ),
-              ListTile(
-                title: Text(
-                    'Principal Distributor: ${item.principalDistributer!.name ?? ''}'),
-              ),
-              ListTile(
-                title: Text('PAN Number: ${item.panNumber ?? ''}'),
-              ),
-              Image.network(item.panImg!.url ?? '', height: 250, width: 250),
-              ListTile(
-                title: Text('Aadhar Number: ${item.aadharNumber ?? ''}'),
-              ),
-              Image.network(item.aadharImg?.url ?? '', height: 250, width: 250),
-              ListTile(
-                title: Text('GST Number: ${item.gstNumber ?? ''}'),
-              ),
-              Image.network(item.gstImg!.url ?? '', height: 250, width: 250),
-              const ListTile(
-                title: Text('Pesticide License: '),
-              ),
-
-              if (item.pesticideLicenseImg != null)
-                Image.network(item.pesticideLicenseImg!.url ?? '',
-                    height: 250, width: 250),
-              // if (item['fertilizer_license_img'] != null)
-              //   Image.network(item['fertilizer_license_img']['url'] ?? ''),
-              const ListTile(
-                title: Text('selfieEntranceImg: '),
-              ),
-              Image.network(item.selfieEntranceImg!.url ?? '',
-                  height: 250, width: 250),
-              const ListTile(
-                title: Text('Notes:'),
-              ),
-              if (item.notes != null)
-                for (var note in item.notes!)
-                  ListTile(
-                    contentPadding: const EdgeInsets.only(left: 20),
-                    title: Text(note.message ?? ''),
-                  ),
-            ],
           ),
         );
       },

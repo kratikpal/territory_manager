@@ -28,6 +28,7 @@ class VerifyDocumentsScreen extends StatelessWidget {
                     {
                       'Trade Name': value.tradeNameController.text,
                       'Name': value.nameController.text,
+                      'Email': value.emailController.text,
                       'Address': value.addressController.text,
                       'Town/City': value.city.text,
                       'District': value.districtController.text,

@@ -45,6 +45,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                           children: <Widget>[
                             CommonTextFormField(
                                 title: 'Trade Name',
+                                textCapitalization: TextCapitalization.words,
                                 fillColor: Colors.white,
                                 validator: (String? value) {
                                   if (value!.isEmpty) {
@@ -56,6 +57,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                             const SizedBox(height: 15),
                             CommonTextFormField(
                                 title: 'Name',
+                                textCapitalization: TextCapitalization.words,
                                 fillColor: Colors.white,
                                 validator: (String? value) {
                                   if (value!.isEmpty) {
@@ -64,6 +66,19 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                                   return null;
                                 },
                                 controller: value.nameController),
+                            const SizedBox(height: 15),
+                            CommonTextFormField(
+                                title: 'Email',
+                                textCapitalization: TextCapitalization.none,
+                                keyboardType: TextInputType.emailAddress,
+                                fillColor: Colors.white,
+                                validator: (String? value) {
+                                  if (value!.isEmpty) {
+                                    return 'Email cannot be empty';
+                                  }
+                                  return null;
+                                },
+                                controller: value.emailController),
                             const SizedBox(height: 15),
                             CommonTextFormField(
                                 title: 'Address',
@@ -110,6 +125,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                             CommonTextFormField(
                                 maxLength: 6,
                                 title: 'Pincode',
+                                keyboardType: TextInputType.number,
                                 fillColor: Colors.white,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly
@@ -125,6 +141,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                             CommonTextFormField(
                                 maxLength: 10,
                                 title: 'Mobile Number',
+                                keyboardType: TextInputType.number,
                                 fillColor: Colors.white,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly
@@ -140,6 +157,7 @@ class RetailerDetailsScreenState extends State<RetailerDetailsScreen> {
                             CommonTextFormField(
                                 maxLength: 12,
                                 title: 'Aadhar Number',
+                                keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly
                                 ],

@@ -8,8 +8,7 @@ import 'package:cheminova/screens/mark_attendence_screen.dart';
 import 'package:cheminova/screens/notification_screen.dart';
 import 'package:cheminova/screens/products_manual_screen.dart';
 import 'package:cheminova/screens/rejected_application_screen.dart';
-import 'package:cheminova/screens/product_sales_data.dart';
-import 'package:cheminova/screens/update_inventory_screen.dart';
+import 'package:cheminova/screens/select_distributer_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
 import 'package:flutter/material.dart';
@@ -119,13 +118,13 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildCustomCard('Display\nSales data',
-                                'Quickly display Sales\n', onTap: () {
+                            child: _buildCustomCard('Collect \nKYC Data',
+                                'Scan and upload KYC Documents', onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const DisplaySalesScreen(),
+                                        const CollectKycScreen(),
                                   ));
                             }),
                           ),
@@ -139,7 +138,9 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const UpdateInventoryScreen(),
+                                        const SelectDistributerScreen(
+                                      task: "Update Inventory",
+                                    ),
                                   ));
                             }),
                           ),
@@ -152,8 +153,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Expanded(
                             child: _buildCustomCard(
-                              'Visit RD/PD',
-                              '\n\n',
+                              'Visit RD/PD\n\n',
+                              '',
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -169,33 +170,17 @@ class _HomePageState extends State<HomePage> {
                             width: 12,
                           ),
                           Expanded(
-                            child: _buildCustomCard(
-                                'Product\nSales Data Visibility', '',
+                            child: _buildCustomCard('Update\nSales Data\n', '',
                                 onTap: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProductSalesData(),
-                                  ));
-                            }),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildCustomCard('Collect \nKYC Data',
-                                'Scan and upload KYC Documents', onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CollectKycScreen(),
-                                  ));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SelectDistributerScreen(
+                                    task: "Update Sales",
+                                  ),
+                                ),
+                              );
                             }),
                           ),
                         ],
@@ -271,10 +256,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => throw Exception(),
-                  child: const Text("Throw Test Exception"),
-                ),
               ],
             ),
           ),

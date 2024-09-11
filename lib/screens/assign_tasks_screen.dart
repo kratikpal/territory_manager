@@ -1,6 +1,7 @@
 import 'package:cheminova/models/pd_rd_response_model.dart';
 import 'package:cheminova/provider/task_provider.dart';
 import 'package:cheminova/screens/confirm_task_screen.dart';
+import 'package:cheminova/utils/string_extension.dart';
 import 'package:provider/provider.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_background.dart';
@@ -149,15 +150,6 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Assign Tasks',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Anek',
-                          ),
-                        ),
                         const SizedBox(height: 20),
                         SearchField(
                           suggestionsDecoration: SuggestionDecoration(
@@ -166,7 +158,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                               bottomRight: Radius.circular(8),
                             ),
                             border: Border.all(
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.white.withOpacity(0.5),
                             ),
                           ),
                           suggestionItemDecoration: BoxDecoration(
@@ -216,7 +208,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                                 (e) => SearchFieldListItem(
                                   e.name!,
                                   item: e,
-                                  child: Text(e.name!),
+                                  child: Text(e.name!.capitalize()),
                                 ),
                               )
                               .toList(),
@@ -266,7 +258,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                                     taskProvider.setSelectedTask(value);
                                   },
                                   title: const Text(
-                                    "Update Sales Data Data",
+                                    "Update Sales Data",
                                   ),
                                 ),
                               ),
@@ -321,6 +313,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                             ),
                             child: TextFormField(
                               controller: taskProvider.noteController,
+                              textCapitalization: TextCapitalization.sentences,
                               expands: true,
                               maxLines: null,
                               minLines: null,
@@ -345,11 +338,12 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                         if (taskProvider.selectedTask ==
                                 'Update Inventory Data' ||
                             taskProvider.selectedTask == 'Visit RD/PD' ||
-                            taskProvider.selectedTask == 'Update Sales Data') ...{
+                            taskProvider.selectedTask ==
+                                'Update Sales Data') ...{
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0,
-                              vertical: 5,
+                              horizontal: 5.0,
+                              vertical: 15,
                             ),
                             child: DropdownButtonFormField<String>(
                               decoration: const InputDecoration(
@@ -384,7 +378,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                           if (selectedDistributorType != null)
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 15.0, vertical: 25),
+                                  horizontal: 5.0, vertical: 15),
                               child: DropdownButtonFormField<PdRdResponseModel>(
                                 decoration: const InputDecoration(
                                   labelText: 'Select Distributor Name',
@@ -400,7 +394,7 @@ class _AssignTasksScreenState extends State<AssignTasksScreen> {
                                     .map((PdRdResponseModel distributor) {
                                   return DropdownMenuItem<PdRdResponseModel>(
                                     value: distributor,
-                                    child: Text(distributor.name!),
+                                    child: Text(distributor.name!.capitalize()),
                                   );
                                 }).toList(),
                                 onChanged: (value) {

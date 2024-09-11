@@ -1,5 +1,5 @@
 import 'package:cheminova/screens/collect_kyc_screen.dart';
-import 'package:cheminova/screens/update_inventory_screen.dart';
+import 'package:cheminova/screens/select_distributer_screen.dart';
 import 'package:cheminova/screens/display_sales_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cheminova/screens/visit_Dealers_screen.dart';
@@ -61,18 +61,41 @@ class DailyTasksScreen extends StatelessWidget {
                         'Update Sales Data',
                         '',
                         onTap: () {
-                          Navigator.push(context,MaterialPageRoute(builder: (context) => const DisplaySalesScreen(),));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const DisplaySalesScreen(),
+                              ));
                         },
                       ),
                       const SizedBox(height: 5),
-                      _buildCustomCard('Update Inventory Data', '',onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const UpdateInventoryScreen(),));
-                      },),
+                      _buildCustomCard(
+                        'Update Inventory Data',
+                        '',
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const SelectDistributerScreen(
+                                  task: "Add Products",
+                                ),
+                              ));
+                        },
+                      ),
                       const SizedBox(height: 5),
-                      _buildCustomCard('Collect KYC Documents', '',onTap:() {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => const CollectKycScreen(),));
-                      }, ),
+                      _buildCustomCard(
+                        'Collect KYC Documents',
+                        '',
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CollectKycScreen(),
+                              ));
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -84,7 +107,8 @@ class DailyTasksScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomCard(String title, String subtitle, {void Function()? onTap}) {
+  Widget _buildCustomCard(String title, String subtitle,
+      {void Function()? onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -103,9 +127,9 @@ class DailyTasksScreen extends StatelessWidget {
         ),
         subtitle: subtitle.isNotEmpty
             ? Text(
-          subtitle,
-          style: const TextStyle(color: Colors.white70, fontSize: 13),
-        )
+                subtitle,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+              )
             : null,
         onTap: onTap,
       ),

@@ -8,3 +8,5 @@ final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
 
 GlobalKey<ScaffoldMessengerState> get scaffoldMessengerKey =>
     _scaffoldMessengerKey;
+
+ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

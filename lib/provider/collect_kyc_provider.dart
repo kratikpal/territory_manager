@@ -30,6 +30,7 @@ class CollectKycProvider extends ChangeNotifier {
   final aadharNumberController = TextEditingController();
   final panNumberController = TextEditingController();
   final gstNumberController = TextEditingController();
+  final emailController = TextEditingController();
 
   String? selectedDistributor;
 
@@ -210,6 +211,12 @@ class CollectKycProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Selfie of Entrance Board is required')),
       );
+    } else if (emailController.text.trim().isEmpty ||
+        !emailController.text.trim().contains(RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid email address')),
+      );
     } else {
       submitCollectKycForm(context);
     }
@@ -221,6 +228,7 @@ class CollectKycProvider extends ChangeNotifier {
       'name': nameController.text.trim(),
       'trade_name': tradeNameController.text.trim(),
       'address': addressController.text.trim(),
+      'email': emailController.text.trim(),
       'state': state.text.trim(),
       'city': city.text.trim(),
       'district': districtController.text.trim(),
@@ -267,8 +275,13 @@ class CollectKycProvider extends ChangeNotifier {
         }
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Submission failed: ${response.statusMessage}')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${response.data['message'] ?? 'Something went wrong'}',
+              ),
+            ),
+          );
         }
       }
     } catch (e) {

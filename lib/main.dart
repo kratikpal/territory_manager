@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:cheminova/constants/constant.dart';
+import 'package:cheminova/provider/add_sales_provider.dart';
 import 'package:cheminova/provider/collect_kyc_provider.dart';
 import 'package:cheminova/provider/pd_rd_provider.dart';
 import 'package:cheminova/provider/product_manual_provider.dart';
@@ -106,6 +108,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => PdRdProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => ProductManualProvider()),
+        ChangeNotifierProvider(create: (_) => AddSalesProvider()),
       ],
       child: const MyApp(),
     ),
@@ -123,6 +126,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       // scaffoldMessengerKey: SnackBarService().scaffoldMessengerKey,
       title: 'cheminova',

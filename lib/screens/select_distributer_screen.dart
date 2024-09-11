@@ -1,6 +1,8 @@
 import 'package:cheminova/models/pd_rd_response_model.dart';
 import 'package:cheminova/provider/pd_rd_provider.dart';
 import 'package:cheminova/screens/add_products_screen.dart';
+import 'package:cheminova/screens/add_sales_products_screen.dart';
+import 'package:cheminova/utils/string_extension.dart';
 import 'package:cheminova/widgets/common_background.dart';
 import 'package:cheminova/widgets/common_app_bar.dart';
 import 'package:cheminova/widgets/common_drawer.dart';
@@ -8,14 +10,16 @@ import 'package:cheminova/widgets/common_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class UpdateInventoryScreen extends StatefulWidget {
-  const UpdateInventoryScreen({super.key});
+class SelectDistributerScreen extends StatefulWidget {
+  final String task;
+  const SelectDistributerScreen({super.key, required this.task});
 
   @override
-  State<UpdateInventoryScreen> createState() => _UpdateInventoryScreenState();
+  State<SelectDistributerScreen> createState() =>
+      _SelectDistributerScreenState();
 }
 
-class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
+class _SelectDistributerScreenState extends State<SelectDistributerScreen> {
   String? selectedDistributorType;
   PdRdResponseModel? selectedDistributor;
 
@@ -45,7 +49,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
             ),
           ],
           title: const Text(
-            'Update Inventory Data',
+            'Select Distributor',
             style: TextStyle(
                 fontSize: 20,
                 color: Colors.black,
@@ -69,18 +73,35 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                   selectedDistributorType == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                      content: Text(
-                          'Please select distributor type and distributor')),
+                    content:
+                        Text('Please select distributor type and distributor'),
+                  ),
                 );
               } else {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProductsScreen(
-                      distributor: selectedDistributor!,
-                      distributorType: selectedDistributorType!,
-                    ),
-                  ),
+                  MaterialPageRoute(builder: (context) {
+                    if (widget.task == 'Update Inventory') {
+                      return AddProductsScreen(
+                        distributor: selectedDistributor!,
+                        distributorType: selectedDistributorType!,
+                      );
+                    } else if (widget.task == 'Update Sales') {
+                      return AddSalesProductScreen(
+                        distributorType:
+                            selectedDistributorType == 'Principal Distributor'
+                                ? 'PrincipalDistributor'
+                                : 'RetailDistributor',
+                        tradeName: selectedDistributorType ==
+                                'Principal Distributor'
+                            ? selectedDistributor!.shippingAddress!.tradeName
+                            : selectedDistributor!.kyc!.tradeName,
+                        pdRdId: selectedDistributor!.id!,
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
                 );
               }
             },
@@ -143,7 +164,7 @@ class _UpdateInventoryScreenState extends State<UpdateInventoryScreen> {
                               .map((PdRdResponseModel distributor) {
                             return DropdownMenuItem<PdRdResponseModel>(
                               value: distributor,
-                              child: Text(distributor.name!),
+                              child: Text(distributor.name!.capitalize()),
                             );
                           }).toList(),
                           onChanged: (value) {

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 class CommonTextFormField extends StatelessWidget {
   final String title;
   final TextEditingController? controller;
+  final TextCapitalization textCapitalization;
   final String? Function(String?)? validator;
   final Color? fillColor;
   final bool? readOnly;
@@ -28,6 +29,7 @@ class CommonTextFormField extends StatelessWidget {
     this.inputFormatters,
     this.maxLength,
     this.onChanged,
+    this.textCapitalization = TextCapitalization.sentences,
     this.obscureText = false,
   });
 
@@ -44,6 +46,7 @@ class CommonTextFormField extends StatelessWidget {
         //         fontFamily: 'Anek')),
         TextFormField(
           controller: controller,
+          textCapitalization: textCapitalization,
           readOnly: readOnly ?? false,
           maxLines: maxLines,
           maxLength: maxLength,
